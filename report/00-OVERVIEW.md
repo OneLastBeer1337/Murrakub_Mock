@@ -26,9 +26,12 @@ This report has four parts, written to be read in order but usable separately.
 | File | What it covers |
 |---|---|
 | [`01-WHAT-MURAKKAB-DOES.md`](01-WHAT-MURAKKAB-DOES.md) | The paper's actual design, phase by phase and component by component. No critique — just what it says. |
+| [`02A-DIRECT-FIDELITY-MAP.md`](02A-DIRECT-FIDELITY-MAP.md) | Start here for a direct, component-by-component comparison of the paper-described system and this repository, with the next evidence pairs to build. |
 | [`02-REPRODUCTION-FIDELITY.md`](02-REPRODUCTION-FIDELITY.md) | Where our implementation matches, where it deliberately differs, where it was forced to differ, and the bugs we made. |
 | [`03-FINDINGS.md`](03-FINDINGS.md) | What implementing it revealed. Five major findings, each with the measurement behind it. |
 | [`04-IMPROVEMENTS.md`](04-IMPROVEMENTS.md) | Ten improvements, each traceable to a sentence in the paper that the formulation fails to encode. |
+| [`05-SLIDE-CONTENT-RESEARCH-DIRECTION.md`](05-SLIDE-CONTENT-RESEARCH-DIRECTION.md) | Discussion-ready slide content: fidelity questions, open methods, improvement candidates across scenarios, and an undecided project focus. |
+| [`06-TOPIC-2-PAPER-CONFIRMATIONS.md`](06-TOPIC-2-PAPER-CONFIRMATIONS.md) | One-by-one checks of topic 2 claims against the OSDI paper, with presentation relevance left for discussion. |
 
 ---
 

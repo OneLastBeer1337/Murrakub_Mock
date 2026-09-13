@@ -26,3 +26,5 @@ data/*.log
 .agents/
 .kilo/
 .kilo
+/tmp/
+
