@@ -21,9 +21,9 @@ Do not skip ahead based on what "should" be next — only this file's status is 
 | 2b | Video Q/A executors + spec (M2 addendum) | development | done | `/development/executor_lib/DESIGN_VIDEO_QA.md` | Un-deferred 2026-09-10. Needs new types, a catalogue module, Listing 2's spec, and a resolution to A18 (existence knobs). Must precede M3 |
 | 3 | Workflow Profiles + Model Profiles | optimization | done | `/optimization/profiles/DESIGN.md` | Profiles **both** workflows. Sourced from paper Tables 4–6, Figs 2–4. Design Q13–Q20 resolved and design approved by Arno 2026-09-11. §14 build order complete: all modules + `critique/` + 9 test files + generated `PROFILES.md`. 350 tests pass; 0 invented values in any `ProfileSet`. **Amended 2026-09-12 during M4:** A73 fixed `derived_tiers`, which was a copy of `baseline` (latency tiers were never derived) |
 | 4 | MILP Optimizer (single-workflow) | optimization | done | `/optimization/milp/DESIGN.md` | Open-source solver (PuLP+CBC), Appendix A.5 formulation. A.5 transcribed verbatim in `/optimization/milp/A5_VERBATIM.md`; Q21 settled, A66/A57/A58 confirmed against source, A72 found. **Design approved by Arno 2026-09-12**; all five decisions Q21–Q25 resolved in DESIGN.md §14. Built in §13 order: 11 modules + 9 test files. **467 tests pass.** Findings: A66 confirmed, A72/A73/A74 new |
-| 5 | MILP Optimizer (multiplexing / μ_m) | optimization | execution review pending | `/optimization/milp/DESIGN_MULTIPLEXING.md` | Mkb Opt+Mult — in scope from the start, not deferred. **Q26–Q32 decided by Claude 2026-09-12 on Arno's instruction ('your call, stay close to Murakkab')**; Q30 sharpened — the headline FINDING is `baseline`'s joint infeasibility (A37), with `derived_tiers` numbers always labelled control, never the headline |
-| 6 | Workflow Registry + Auto-Scaler | execution | not started | — | Section 3.4 |
-| 7 | End-to-end single-request run (Code Gen) | execution | not started | — | First point real numbers can be sanity-checked |
+| 5 | MILP Optimizer (multiplexing / μ_m) | optimization | done | `/optimization/milp/DESIGN_MULTIPLEXING.md` | Mkb Opt+Mult — in scope from the start, not deferred. **Q26–Q32 decided by Claude 2026-09-12 on Arno's instruction ('your call, stay close to Murakkab')**; Q30 sharpened — the headline FINDING is `baseline`'s joint infeasibility (A37), with `derived_tiers` numbers always labelled control, never the headline |
+| 6 | Workflow Registry + Auto-Scaler | execution | done | `/execution/DESIGN.md` | Section 3.4 + Table 1 Phase 3. First execution-phase milestone. A87/A90 confirmed verbatim against §4.7; A69 upgraded. Q33–Q42 decided by Claude on Arno's instruction. Built: 13 modules + 3 test files, 551 tests pass. **A87 MEASURED**; A93 found (total_gpus bug in M4/M5, fixed) |
+| 7 | End-to-end single-request run | execution | execution review pending | `/execution/DESIGN_END_TO_END.md` | First point real numbers can be sanity-checked. **SCOPE CORRECTION (A94): Code Gen alone cannot demonstrate the critical-path gap — it is 0.29% there vs 69% on Video Q/A.** Q43–Q53 decided by Claude on Arno's instruction (Q52 overridden to concurrent siblings, citing §4.6). Built: `workflow_run.py` + `critique/observed_path.py` + 18 tests. **570 tests pass. A94 MEASURED on both workflows.** |
 | — | Numerical validation vs. paper (Tables 1–6, Figs 7–14) | — | deferred | — | Explicitly a later phase, not part of M1–M7 |
 | — | OS-log-analysis workflow (custom extension) | — | deferred | — | Own design session after Code Gen is solid |
 | — | Math Q/A workflow | — | deferred | — | Video Q/A un-deferred 2026-09-10 (now M2b); Math Q/A still deferred |
@@ -137,6 +137,111 @@ Keep in sync with entries added to Arno's `architecture-decisions.md` memory fil
   settled: `α` scopes both (1) and (2); eq. (3) has **no** average twin, so `n_m` is provisioned
   from peak alone; eq. (13)'s superscript is `avg`. Transcription in
   `/optimization/milp/A5_VERBATIM.md`. **A57 and A58 also confirmed exactly** against the source.
+- **CORRECTION (2026-09-13, verified against the PDF) — A68's CONSEQUENCE WAS WRONG.** I wrote
+  that "a latency-tier run has no quality floor whatsoever". §4.3 (p.577) says the opposite,
+  verbatim: **"We guarantee a basic accuracy tier even for latency SLO requests (e.g., 50% for
+  video Q/A)."** What survives is the FORMULATION claim: A.5 gives one `τ_{w,s}` per pair and
+  scopes eq. (4) to `s = max_accuracy`, so it cannot express two simultaneous floors. What is
+  wrong is describing that as Murakkab's behaviour — the evaluation applies a floor the
+  formulation cannot state. Another PATTERN instance (§4.x exercises what A.5 cannot express),
+  and our M4/M6 code is faithful to A.5 but NOT to §4.3's described system. Also note the printed
+  Figure 7a `basic` label is 54.9%, while §4.3 says "e.g., 50%" — a third small discrepancy.
+- **CORRECTION (2026-09-13) — §4.6's "near-perfect parallel" is about TWO WORKFLOWS, not Video
+  Q/A's internal branch.** §4.6 opens: *"the orchestrator constructs a DAG with a fan-out for the
+  two sub-tasks that can execute in parallel: (1) video Q/A ... and (2) code generation"*. So
+  "the two sub-tasks" are the two composed WORKFLOWS in a dynamic request, not `frame_extract`
+  and `stt`. I cited it repeatedly as evidence for the intra-Video-Q/A overlap, including when
+  overriding Q52 at M7. The intra-workflow fan-out is still REAL — Listing 2 has `frame_extract`
+  and `stt` both consuming `scenes` and both feeding `q_a`, and Figure 12's Gantt shows them as
+  separate rows — but the "full overlap in execution" sentence is not about them. Q52's outcome
+  (concurrent siblings) still stands on Listing 2's structure; its stated justification was wrong.
+- **M7** — A94 **MEASURED end to end, on both workflows.** One request walked through all three
+  phases, per-node timings recorded, set beside eq. (5):
+  **Code Generation** (DSQ-32B/H100/TP=4, D=4 R=4, `t_c`=39,969): eq. (5) = 1547.02 s, observed
+  walk = 1550.69 s → blind spot **0.24%**, 1 free stage, 18 LLM invocations charged one prefill.
+  **Video Q/A** (NVLM-D-72B/H100/TP=8, STT on, `t_c`=194): eq. (5) = 2.74 s, observed = 8.74 s →
+  blind spot **69%**, 3 free stages. Survives the ±3× invented-tool band (42%–87%), so it rests on
+  structure not magnitudes. The parallel branch reproduces §4.6's measured overlap: `frame_extract`
+  2→3 s and `stt` 2→6 s run concurrently, `q_a` starts at 6 s (the max) not 7 s (the sum), saving
+  1.0 s. **The HEFT/precedence critique is now a measurement rather than a structural argument.**
+- **M7** — **Q52 overridden to CONCURRENT siblings.** The design recommended serial as "deliberate
+  pessimism"; §4.6 (p.578) *measures* "near-perfect parallel, with full overlap in execution", and
+  M3's `critical_path.py` already computes `max(L_frames, L_stt)`. Serial would have contradicted
+  the paper's own measurement and disagreed with the critique module the trace feeds.
+- **M7** — **the DAG prohibition is NARROWED, not broken.** M4/M5/M6 may not read a DAG at all;
+  M7's `workflow_run.py` must, because a workflow cannot execute without respecting data flow. The
+  line: *walking* for data-flow correctness is permitted in exactly one module; *scheduling* by the
+  DAG for resource allocation stays forbidden everywhere. Enforced by four tests — the `(c,m)` pair
+  is fixed before the walk, ties break on declaration order not duration, no critical-path/EFT
+  identifier exists in the walker, and exactly one module imports `shared.workflow`.
+- **M7 (design)** — A94 **: eq. (5)'s blind spot is 0.29% on Code Generation and ~69% on Video
+  Q/A — so M7's stated target workflow is the worst possible choice for the HEFT critique.**
+  Measured: DeepSeek-Qwen-32B/H100/TP=4 at D=4,R=4 has `t_c` = 39,969 tokens, so eq. (5) reads
+  **1,547 s** and the TPOT term swamps everything — the one tool stage (0.8 s) plus 17 unbilled
+  prefills (3.7 s) come to **0.29%** of true latency. On Video Q/A the same arithmetic inverts:
+  `t_c` = 194 tokens gives eq. (5) = 2.74 s against ~6 s of tool stages, so **eq. (5) misses ~69%**
+  of end-to-end latency. The conclusion survives the full ±3× invented-tool band (42%–87%), so it
+  rests on the STRUCTURE — small `t_c`, three tool stages — not on the invented magnitudes.
+  **Consequence:** Code Gen can sanity-check the pipeline (M7's stated purpose) but cannot produce
+  a meaningful critical-path number; Video Q/A must carry that arm. Same reasoning as Q25 at M4.
+- **M7 (design)** — A96 **corrected: the TTFT undercount is real but numerically trivial.** eq. (5)
+  charges ONE prefill; a `D=4,R=4` request makes ~18 LLM invocations and pays ~18. The structural
+  point stands and costs nothing to state — `(invocations − 1) · l^TTFT_m`, integers times a
+  profiled value, zero invented magnitudes. But it is **0.2%–2.6%** of eq. (5) across every Code
+  Gen profile, precisely because `t_c` is enormous. The design doc calls it "the strongest
+  defensible result in the milestone"; it is not, and should not be presented that way.
+- **M6** — A93 **(bug in M4/M5, found by M6, fixed): `MilpResult.total_gpus` returned INSTANCE
+  counts, not GPUs.** It was `sum(n_m)`, but A.5 multiplies by `g_m` everywhere (eqs. 6, 7, 11,
+  12) and TP degrees here range 1–8 — one NVLM-D-72B/TP=8 instance is 8 GPUs, not 1. Found when
+  M6's fleet reported 328 GPUs where the MILP said 41. **A80 was recomputed and survives intact:**
+  structural sharing still exactly **0.00%**, μ contribution 22.01% (was 22.14% on instance
+  counts), separate/joint/joint+mult now 418 / 418 / 326 GPUs. `total_instances` added as the
+  honestly-named accessor. `g_m == ModelProfileKey.tp` is test-enforced, so the fix needed no new
+  plumbing.
+- **M6** — A87 **MEASURED, not just confirmed.** Same plan, same load, same thresholds; only the
+  provisioning delay changes. A 2.5× spike lasting 200 s (shorter than the 20-minute delay, which
+  is the normal case for Figure 19's traces):
+  **with the paper's own 20-min provisioning → 81.5% SLO violations**; with instant provisioning →
+  36.5%. The auto-scaler *does* react (7 scale-out events, 49 instances requested and granted) but
+  the capacity arrives long after the spike has passed, burning **141,680 wasted GPU-seconds** for
+  no benefit. So during any spike shorter than 20 minutes the auto-scaler is **worse than
+  useless** — it pays for capacity that is never used. Section 3.4's "rapidly scales out" is not
+  achievable under Section 4.7's own assumption.
+- **M6** — **queueing dominates token variance as a violation cause.** In the same run, 12,451
+  violations were attributable to queueing versus 1,119 to token variance. eq. (5) admits a pair
+  on `l^TTFT + t_c·l^TPOT ≤ τ` with **no queueing term at all**, so the dominant failure mode is
+  latency the optimizer structurally cannot model — a runtime confirmation of the capacity-model
+  critique, measured rather than argued.
+- **M6 (design)** — A87 **CONFIRMED verbatim: the auto-scaler cannot do what §3.4 claims.** §3.4
+  says it "monitors per-model instance load over short windows (**seconds to minutes**) and
+  **rapidly scales out** when needed". §4.7 says "Provisioning new instances (i.e., VM allocation,
+  software setup, and model transfer to GPUs) is assumed to take **20 minutes** [31, 38, 62]."
+  A 20-minute cold start cannot answer a 60-second window. The only reconciliation is pre-warmed
+  spare capacity — §3.4 says Murakkab "maintains spare resources" but **never sizes them** (A88),
+  and A.5 has no parameter for spare (`B_g` is a hard budget, `α` is a demand buffer). So the
+  auto-scaler's entire responsiveness claim rests on an undefined quantity.
+- **M6 (design)** — A90: **`α` denotes two different things.** A.5 p.586: "α: Unified buffer factor
+  (default 1.15)". §4.7: "an exponentially weighted moving average (EWMA), with **α = 0.5**, to
+  predict workload demand". The auto-scaler needs both at once. Notational collision, not a
+  contradiction — but it will silently corrupt any implementation that reuses one symbol.
+- **M6 (design)** — **A69 UPGRADED from "A.5 has no inter-epoch coupling" to a PATTERN instance.**
+  §4.7 identifies a whole cost regime dominated by exactly the thing A.5 cannot express: "Zone 1
+  (10–60 minutes): Buffer-dominated. Frequent reoptimization induces high transition overhead.
+  Excessive GPU provisioning during transitions leads to lower utilization... Frequent model and
+  tool changes can also reduce KV cache efficiency." The paper **measures** transition overhead
+  and builds a sensitivity analysis on it, while A.5 has no switching-cost, warm-start or
+  instance-lifetime term whatsoever. Same shape as the parallelism, CPU-placement and tool gaps.
+- **M6 (design)** — good news: **the load projector is paper-sourced, not invented.** §4.7 gives
+  EWMA with α = 0.5. It lives in evaluation rather than design, but M6 can reproduce projection
+  faithfully instead of inventing a predictor.
+- **A80 RE-VERIFIED (2026-09-13) against §4.1's own definitions.** §4.1: "Mkb Opt optimizes **each
+  workflow–SLO combination**"; "Mkb Opt+Mult **jointly** optimizes requests **across all**
+  workflow–SLO combinations". My original separate arm kept both SLOs together, which was more
+  joint than the paper's. Re-measured with four fully separate solves: **418 GPUs separate → 418
+  joint at μ=1 → still exactly +0.00% sharing gain**; 326 with μ=0.784 (22.01%). A80 survives the
+  correction. Table 2 also verified cell-by-cell: 1164→912 GPUs = 21.6%, 27.7→22.1 MWh = 20.2%,
+  57.2→47.2k$ = 17.5%. This also settles Q26, which the design refused to pick: Table 2's
+  "Murakkab Opt" IS the separate arm, by §4.1's own wording.
 - **M5** — A80 **(MEASURED — the milestone's strongest result): A.5's structure produces ZERO
   multiplexing gain; the entire 21.6% enters through `μ`.** Three arms on `derived_tiers`,
   §4.3 setup, objective (11): separate-and-summed = **131 GPUs**; joint with `μ=1` (sharing `n_m`

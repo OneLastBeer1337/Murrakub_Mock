@@ -346,8 +346,14 @@ class JointResult:
     data_excluded: tuple[str, ...] = ()
 
     @property
-    def total_gpus(self) -> int:
+    def total_instances(self) -> int:
+        """Sum of `n_m` -- server instances, not GPUs."""
         return sum(self.n.values())
+
+    @property
+    def total_gpus(self) -> int:
+        """Sum of `n_m * g_m`. See `MilpResult.total_gpus` -- same correction, same reason."""
+        return sum(n * m.tp for m, n in self.n.items())
 
     def gpus_by_workflow(self) -> Mapping[str, float]:
         """**[OURS], and the answer is that it cannot be done honestly.**
@@ -363,7 +369,8 @@ class JointResult:
             by_model[m] = by_model.get(m, 0.0) + mass
         for (w, _s, _c, m), mass in self.x_peak.items():
             if by_model.get(m, 0.0) > 0 and m in self.n:
-                share[w] += self.n[m] * (mass / by_model[m])
+                # GPUs, not instances: n_m * g_m, matching eq. (7) and objectives (11)/(12).
+                share[w] += self.n[m] * m.tp * (mass / by_model[m])
         return share
 
 

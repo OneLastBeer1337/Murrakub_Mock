@@ -78,9 +78,23 @@ class MilpResult:
     nearest_miss: str = ""
 
     @property
-    def total_gpus(self) -> int:
-        """Sum of `n_m * g_m`. ALWAYS quote with `GPU_QUALIFIER`."""
+    def total_instances(self) -> int:
+        """Sum of `n_m` -- SERVER instances, not GPUs. One instance of a TP=8 profile is 8 GPUs."""
         return sum(self.n.values())
+
+    @property
+    def total_gpus(self) -> int:
+        """Sum of `n_m * g_m` -- what eq. (7) and objectives (11)/(12) actually count.
+
+        CORRECTED: this previously returned `sum(n_m)`, i.e. instance counts under a GPU name.
+        The error mattered: A.5 multiplies by `g_m` everywhere (eqs. 6, 7, 11, 12), TP degrees in
+        this profile set range 1..8, and A80's multiplexing comparison is a GPU-count ratio. A
+        single NVLM-D-72B/TP=8 instance is 8 GPUs, not 1.
+
+        `g_m == ModelProfileKey.tp` is asserted by `test_parallelism_equals_the_key_tp`, so the
+        key alone carries the conversion and no extra plumbing is needed.
+        """
+        return sum(n * m.tp for m, n in self.n.items())
 
     def caveats(self) -> tuple[str, ...]:
         """The block that must accompany any number from this run."""

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Murakkab Reproduction — How to Use This With Claude Code
 
 ## Setup
@@ -50,3 +51,6 @@ instructions, so it won't quietly "fix" Murakkab's design while reproducing it.
 Anything a subagent flags as a design gap gets raised in-conversation and, once you confirm
 it's real, added to your `architecture-decisions.md` (outside this repo, in your memory
 files) — `/confirm-milestone` will prompt for this at each milestone boundary.
+=======
+# Murrakub_Mockup
+>>>>>>> 57e06bfd0a6d55401f50a372d136d24071f3020b
