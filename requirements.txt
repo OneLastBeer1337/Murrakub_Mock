@@ -1,0 +1,13 @@
+# PoC dependencies — Python 3.11+
+pulp>=2.8,<4         # MILP + LP modelling. CBC ships with it:
+                     #   python -c "import pulp; print(pulp.listSolvers(onlyAvailable=True))"
+                     # Pinned below 4.0 deliberately. PuLP 3.3 already deprecates both
+                     # things exact_milp.py relies on — direct LpVariable construction and
+                     # PULP_CBC_CMD — and 4.0 removes them. Unpin only alongside the
+                     # migration, and re-run poc/tests/test_adversarial.py after: the
+                     # fixture returning 280 is what proves the encoding survived.
+numpy>=1.26          # subgradient updates, instance generation
+pytest>=8.0          # test framework
+
+# ortools was listed in v1 as an optional CP-SAT comparison. Dropped from the PoC —
+# CBC is sufficient at the instance sizes here, and a second solver answers none of T1-T4.

@@ -1,0 +1,58 @@
+[
+  {
+    "snapshot": "P6",
+    "papers": 6,
+    "concepts": 18,
+    "total_words": 2933,
+    "timestamp": "2026-08-27T07:37:47.636793Z"
+  },
+  {
+    "snapshot": "P6",
+    "papers": 6,
+    "concepts": 18,
+    "total_words": 3178,
+    "timestamp": "2026-08-27T07:48:14.241827Z"
+  },
+  {
+    "snapshot": "P7",
+    "papers": 7,
+    "concepts": 21,
+    "total_words": 4807,
+    "timestamp": "2026-08-27T08:40:27.936515Z"
+  },
+  {
+    "snapshot": "P8",
+    "papers": 8,
+    "concepts": 23,
+    "total_words": 5647,
+    "timestamp": "2026-08-27T08:42:46.223118Z"
+  },
+  {
+    "snapshot": "P9",
+    "papers": 9,
+    "concepts": 25,
+    "total_words": 7152,
+    "timestamp": "2026-08-27T08:45:09.720213Z"
+  },
+  {
+    "snapshot": "P9",
+    "papers": 9,
+    "concepts": 25,
+    "total_words": 8554,
+    "timestamp": "2026-08-29T06:16:59.522949+00:00"
+  },
+  {
+    "snapshot": "P11",
+    "papers": 11,
+    "concepts": 30,
+    "total_words": 11490,
+    "timestamp": "2026-08-29T07:26:53.510847+00:00"
+  },
+  {
+    "snapshot": "P12",
+    "papers": 12,
+    "concepts": 30,
+    "total_words": 12260,
+    "timestamp": "2026-09-03T05:45:21.136692+00:00"
+  }
+]

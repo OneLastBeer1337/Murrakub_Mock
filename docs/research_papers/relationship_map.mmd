@@ -1,0 +1,208 @@
+graph LR
+  %% ===== Papers (left) =====
+  subgraph Papers[" Papers "]
+    P1("Murakkab")
+    P2(["Dynamic Orchestration of Data Pipelines via Agentic AI"])
+    P3("Fast Heterogeneous Serving")
+    P4(["RouteLLM"])
+    P5(["RouteJudge / ORBIT"])
+    P6(["AgentOpt"])
+    P7(["MASTER (MARL for PPM)"])
+    P8(["MARL Survey (Ning & Xie)"])
+    P9(["Update Opacity (Hatherley)"])
+    P10("Palimpzest")
+    P11(["DocETL"])
+    P12("DSPy")
+  end
+  %% ===== Concepts (middle) =====
+  subgraph Concepts[" Concepts / Mechanisms "]
+    C_DAG{{"DAG / Topological-order workflow execution"}}
+    C_PGO{{"Profile-Guided Optimization (real measured data drives allocation)"}}
+    C_MILP{{"MILP joint solver for task/model/hardware assignment"}}
+    C_HEURISTIC{{"Heuristic/greedy allocation as MILP alternative"}}
+    C_DRIFT{{"Self-updating / drift-correcting profile estimates"}}
+    C_STATIC_DYNAMIC{{"Static (design-time) vs dynamic (runtime-adaptive) allocation"}}
+    C_FORMAL_OBJ{{"Formal cost/latency/quality objective function"}}
+    C_EVAL_METRICS{{"Evaluation metrics for allocation/routing quality"}}
+    C_FEASFIRST{{"Feasibility-first filtering before cost-ranking"}}
+    C_LEARNED_ROUTING{{"Learned query-to-model routing"}}
+    C_QUALITY_COST_METRIC{{"Quality-vs-cost tradeoff metrics (PGR/APGR-style)"}}
+    C_ONLINE_PREF_EVAL{{"Online preference-based evaluation methodology"}}
+    C_CURVE_METRICS{{"Curve-level routing metrics (nAUC, Peak Score, QNC, RCI)"}}
+    C_STANDARDIZED_TOOLING{{"Standardized-tooling design pattern for fair comparison harness"}}
+    C_COMBO_SELECTION{{"Model-combination-level selection (assign models per pipeline role jointly, not per call)"}}
+    C_BANDIT_SEARCH{{"Multi-armed bandit / arm-elimination search over a combinatorial config space"}}
+    C_CLIENT_SIDE_OPT{{"Client-side (developer-controlled) optimization vs server-side serving optimization"}}
+    C_TRANSPORT_INTERCEPT{{"Framework-agnostic transport-layer interception/attribution for measuring per-call cost/latency"}}
+    C_MARL_ALLOC{{"Multi-agent RL for decentralized task-to-resource allocation (learned policies vs. rule-based/heuristic assignment)"}}
+    C_DECPOMDP{{"Dec-POMDP: decentralized execution under partial observability, each resource/task-executor modeled as an autonomous agent"}}
+    C_BASELINE_STATTEST{{"Baseline-comparison evaluation methodology (random / best-heuristic / ground-truth baselines + non-parametric significance testing)"}}
+    C_CTDE{{"Centralized Training with Decentralized Execution (CTDE) as the dominant MARL training/execution paradigm"}}
+    C_MARL_CHALLENGES{{"Named MARL failure modes: non-stationarity, partial observability, credit assignment, scalability, communication constraints"}}
+    C_UPDATE_OPACITY{{"Update opacity: inability to explain why a model's output changed between versions, even when each version's individual reasoning is otherwise understood"}}
+    C_INTRA_ML_DISAGREEMENT{{"Intra-ML disagreement / diachronic evolution: a system giving different outputs for functionally identical inputs before vs. after an update or drift-correction"}}
+    C_LOGICAL_PHYSICAL_SPLIT{{"Logical plan / physical plan separation: structure decisions and implementation decisions optimized as two distinct but jointly-searched layers"}}
+    C_SAFE_REWRITE_RULES{{"Correctness-preserving structural rewrite rules (reordering, splitting/merging) applied only where declared local dependency facts permit them"}}
+    C_SENTINEL_SAMPLING{{"Sentinel plans: cheap, sample-based estimation using a few reference configurations to compare candidates before committing to full evaluation"}}
+    C_LLM_REWRITE_AGENT{{"LLM-driven (agentic) rewrite generation and verification, as opposed to fixed provably-safe rule-based rewriting"}}
+    C_DOC_DECOMPOSE_PATTERN{{"Document-processing-specific decomposition patterns (e.g. split-gather-map-reduce for long documents)"}}
+  end
+  %% ===== Scope Items (right) =====
+  subgraph Scope[" Project Scope "]
+    S1["Workflow Orchestration System"]
+    S2["Profile-Guided Allocation"]
+    S3["Testing and Evaluation"]
+  end
+  %% ===== Paper -> Concept links =====
+  P1 ===> C_DAG
+  P1 ===> C_PGO
+  P1 ===> C_MILP
+  P2 --> C_STATIC_DYNAMIC
+  P2 --> C_FORMAL_OBJ
+  P2 --> C_EVAL_METRICS
+  P2 -.-> C_DAG
+  P3 ===> C_HEURISTIC
+  P3 ===> C_FEASFIRST
+  P3 ===> C_MILP
+  P3 --> C_STATIC_DYNAMIC
+  P3 --> C_EVAL_METRICS
+  P3 --> C_FORMAL_OBJ
+  P3 -.-> C_DRIFT
+  P4 --> C_LEARNED_ROUTING
+  P4 ===> C_QUALITY_COST_METRIC
+  P4 -.-> C_HEURISTIC
+  P4 --> C_EVAL_METRICS
+  P4 -.-> C_DRIFT
+  P5 ===> C_ONLINE_PREF_EVAL
+  P5 ===> C_CURVE_METRICS
+  P5 --> C_STANDARDIZED_TOOLING
+  P5 --> C_EVAL_METRICS
+  P5 --> C_QUALITY_COST_METRIC
+  P5 -.-> C_HEURISTIC
+  P6 ===> C_COMBO_SELECTION
+  P6 --> C_DAG
+  P6 --> C_HEURISTIC
+  P6 ===> C_BANDIT_SEARCH
+  P6 ===> C_CLIENT_SIDE_OPT
+  P6 --> C_EVAL_METRICS
+  P6 -.-> C_STATIC_DYNAMIC
+  P6 ===> C_TRANSPORT_INTERCEPT
+  P7 ===> C_DECPOMDP
+  P7 ===> C_MARL_ALLOC
+  P7 -.-> C_DAG
+  P7 --> C_STATIC_DYNAMIC
+  P7 ===> C_BASELINE_STATTEST
+  P7 --> C_EVAL_METRICS
+  P8 ===> C_DECPOMDP
+  P8 ===> C_CTDE
+  P8 --> C_MARL_ALLOC
+  P8 ===> C_MARL_CHALLENGES
+  P8 -.-> C_BASELINE_STATTEST
+  P9 ===> C_UPDATE_OPACITY
+  P9 ===> C_DRIFT
+  P9 ===> C_INTRA_ML_DISAGREEMENT
+  P9 --> C_EVAL_METRICS
+  P9 --> C_STATIC_DYNAMIC
+  P10 ===> C_LOGICAL_PHYSICAL_SPLIT
+  P10 ===> C_SAFE_REWRITE_RULES
+  P10 ===> C_SENTINEL_SAMPLING
+  P10 --> C_DAG
+  P10 --> C_EVAL_METRICS
+  P10 -.-> C_STATIC_DYNAMIC
+  P11 ===> C_LLM_REWRITE_AGENT
+  P11 ===> C_DOC_DECOMPOSE_PATTERN
+  P11 -.-> C_SAFE_REWRITE_RULES
+  P11 --> C_EVAL_METRICS
+  P12 ===> C_DAG
+  P12 ===> C_LOGICAL_PHYSICAL_SPLIT
+  P12 ===> C_PGO
+  P12 --> C_FORMAL_OBJ
+  P12 --> C_EVAL_METRICS
+  %% ===== Concept -> Scope links =====
+  C_DAG --> S1
+  C_PGO --> S2
+  C_MILP --> S2
+  C_MILP --> S3
+  C_HEURISTIC --> S2
+  C_DRIFT --> S2
+  C_STATIC_DYNAMIC --> S2
+  C_STATIC_DYNAMIC --> S3
+  C_FORMAL_OBJ --> S2
+  C_FORMAL_OBJ --> S3
+  C_EVAL_METRICS --> S3
+  C_FEASFIRST --> S2
+  C_LEARNED_ROUTING --> S2
+  C_QUALITY_COST_METRIC --> S3
+  C_ONLINE_PREF_EVAL --> S3
+  C_CURVE_METRICS --> S3
+  C_STANDARDIZED_TOOLING --> S3
+  C_COMBO_SELECTION --> S2
+  C_BANDIT_SEARCH --> S2
+  C_CLIENT_SIDE_OPT --> S1
+  C_TRANSPORT_INTERCEPT --> S1
+  C_MARL_ALLOC --> S1
+  C_MARL_ALLOC --> S2
+  C_DECPOMDP --> S1
+  C_BASELINE_STATTEST --> S3
+  C_CTDE --> S1
+  C_MARL_CHALLENGES --> S2
+  C_UPDATE_OPACITY --> S2
+  C_UPDATE_OPACITY --> S3
+  C_INTRA_ML_DISAGREEMENT --> S2
+  C_LOGICAL_PHYSICAL_SPLIT --> S1
+  C_LOGICAL_PHYSICAL_SPLIT --> S2
+  C_SAFE_REWRITE_RULES --> S1
+  C_SENTINEL_SAMPLING --> S2
+  C_SENTINEL_SAMPLING --> S3
+  C_LLM_REWRITE_AGENT --> S1
+  C_DOC_DECOMPOSE_PATTERN --> S1
+  %% ===== Styles =====
+  classDef foundation fill:#FFE4B5,stroke:#B8860B,stroke-width:2px,color:#3a2a00;
+  classDef supporting fill:#D6EAF8,stroke:#2E86C1,stroke-width:1.5px,stroke-dasharray: 4 2,color:#0b3350;
+  classDef concept fill:#F4ECF7,stroke:#8E44AD,stroke-width:1.5px,color:#3d1f4d;
+  classDef scope fill:#E8F8F5,stroke:#0F6E56,stroke-width:2px,color:#0b3a2e;
+  class P1 foundation;
+  class P2 supporting;
+  class P3 foundation;
+  class P4 supporting;
+  class P5 supporting;
+  class P6 supporting;
+  class P7 supporting;
+  class P8 supporting;
+  class P9 supporting;
+  class P10 foundation;
+  class P11 supporting;
+  class P12 foundation;
+  class C_DAG concept;
+  class C_PGO concept;
+  class C_MILP concept;
+  class C_HEURISTIC concept;
+  class C_DRIFT concept;
+  class C_STATIC_DYNAMIC concept;
+  class C_FORMAL_OBJ concept;
+  class C_EVAL_METRICS concept;
+  class C_FEASFIRST concept;
+  class C_LEARNED_ROUTING concept;
+  class C_QUALITY_COST_METRIC concept;
+  class C_ONLINE_PREF_EVAL concept;
+  class C_CURVE_METRICS concept;
+  class C_STANDARDIZED_TOOLING concept;
+  class C_COMBO_SELECTION concept;
+  class C_BANDIT_SEARCH concept;
+  class C_CLIENT_SIDE_OPT concept;
+  class C_TRANSPORT_INTERCEPT concept;
+  class C_MARL_ALLOC concept;
+  class C_DECPOMDP concept;
+  class C_BASELINE_STATTEST concept;
+  class C_CTDE concept;
+  class C_MARL_CHALLENGES concept;
+  class C_UPDATE_OPACITY concept;
+  class C_INTRA_ML_DISAGREEMENT concept;
+  class C_LOGICAL_PHYSICAL_SPLIT concept;
+  class C_SAFE_REWRITE_RULES concept;
+  class C_SENTINEL_SAMPLING concept;
+  class C_LLM_REWRITE_AGENT concept;
+  class C_DOC_DECOMPOSE_PATTERN concept;
+  class S1 scope;
+  class S2 scope;
+  class S3 scope;

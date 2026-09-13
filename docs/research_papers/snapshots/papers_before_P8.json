@@ -1,0 +1,519 @@
+{
+  "project": {
+    "name": "Profile-Guided Resource Orchestration Platform for Multi-Step Agentic Workflows",
+    "scope_items": {
+      "S1": "Workflow Orchestration System (DAG-based, topological execution over multi-step agentic workflows)",
+      "S2": "Profile-Guided Allocation (heuristic scoring, model+hardware+config assignment, drift-correction)",
+      "S3": "Testing and Evaluation (fault injection, cost/latency/reliability comparison vs fixed allocation)"
+    }
+  },
+  "concepts": [
+    {
+      "id": "C_DAG",
+      "name": "DAG / Topological-order workflow execution",
+      "supports_scope": "S1"
+    },
+    {
+      "id": "C_PGO",
+      "name": "Profile-Guided Optimization (real measured data drives allocation)",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_MILP",
+      "name": "MILP joint solver for task/model/hardware assignment",
+      "supports_scope": [
+        "S2",
+        "S3"
+      ]
+    },
+    {
+      "id": "C_HEURISTIC",
+      "name": "Heuristic/greedy allocation as MILP alternative",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_DRIFT",
+      "name": "Self-updating / drift-correcting profile estimates",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_STATIC_DYNAMIC",
+      "name": "Static (design-time) vs dynamic (runtime-adaptive) allocation",
+      "supports_scope": [
+        "S2",
+        "S3"
+      ]
+    },
+    {
+      "id": "C_FORMAL_OBJ",
+      "name": "Formal cost/latency/quality objective function",
+      "supports_scope": [
+        "S2",
+        "S3"
+      ]
+    },
+    {
+      "id": "C_EVAL_METRICS",
+      "name": "Evaluation metrics for allocation/routing quality",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_FEASFIRST",
+      "name": "Feasibility-first filtering before cost-ranking",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_LEARNED_ROUTING",
+      "name": "Learned query-to-model routing",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_QUALITY_COST_METRIC",
+      "name": "Quality-vs-cost tradeoff metrics (PGR/APGR-style)",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_ONLINE_PREF_EVAL",
+      "name": "Online preference-based evaluation methodology",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_CURVE_METRICS",
+      "name": "Curve-level routing metrics (nAUC, Peak Score, QNC, RCI)",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_STANDARDIZED_TOOLING",
+      "name": "Standardized-tooling design pattern for fair comparison harness",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_COMBO_SELECTION",
+      "name": "Model-combination-level selection (assign models per pipeline role jointly, not per call)",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_BANDIT_SEARCH",
+      "name": "Multi-armed bandit / arm-elimination search over a combinatorial config space",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_CLIENT_SIDE_OPT",
+      "name": "Client-side (developer-controlled) optimization vs server-side serving optimization",
+      "supports_scope": "S1"
+    },
+    {
+      "id": "C_TRANSPORT_INTERCEPT",
+      "name": "Framework-agnostic transport-layer interception/attribution for measuring per-call cost/latency",
+      "supports_scope": "S1"
+    },
+    {
+      "id": "C_MARL_ALLOC",
+      "name": "Multi-agent RL for decentralized task-to-resource allocation (learned policies vs. rule-based/heuristic assignment)",
+      "supports_scope": [
+        "S1",
+        "S2"
+      ]
+    },
+    {
+      "id": "C_DECPOMDP",
+      "name": "Dec-POMDP: decentralized execution under partial observability, each resource/task-executor modeled as an autonomous agent",
+      "supports_scope": "S1"
+    },
+    {
+      "id": "C_BASELINE_STATTEST",
+      "name": "Baseline-comparison evaluation methodology (random / best-heuristic / ground-truth baselines + non-parametric significance testing)",
+      "supports_scope": "S3"
+    }
+  ],
+  "papers": [
+    {
+      "id": "P1",
+      "short_name": "Murakkab",
+      "full_citation": "Chaudhry, G. I., et al. (2026). Murakkab: Resource-Efficient Agentic Workflow Orchestration in Cloud Platforms. OSDI '26.",
+      "role": "foundation",
+      "role_label": "Technical base of the project",
+      "status": "in_references",
+      "summary": "Declarative workflow compiled to a DAG; a Profile-Guided Optimizer (MILP) jointly assigns model, hardware, and parallelism per task, solved once per workflow instance, using real profiled cost/latency/reliability data rather than assumptions.",
+      "full_detail": {
+        "problem": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY, NOT RE-DERIVED FROM THE ORIGINAL PDF] Existing agentic workflow systems fix model/hardware assignment at design time or make per-call decisions without a holistic, whole-DAG view, leading to inefficient resource use in cloud deployment of multi-step agentic workflows.",
+        "method": "Declarative workflow specification compiled into a DAG. A Profile-Guided Optimizer inspects the full DAG before execution and solves a MILP that jointly assigns model + hardware/resource + parallelism configuration per task, using profiled (measured, not assumed) cost/latency/reliability data. Decision is made once per workflow instance, not per call.",
+        "results": "[Not re-derivable without the source PDF \u2014 original session's extracted numbers are not preserved in the handoff summary.]",
+        "limitations": "MILP requires a specialized/licensed solver (CPLEX/Gurobi/GLPK-class), does not adapt to drift without a full re-solve, and is heavyweight relative to the compute/engineering budget of a one-semester student project.",
+        "numbers": []
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_DAG",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Murakkab is the origin of the whole-DAG-before-assignment framing this project adopts."
+        },
+        {
+          "concept_id": "C_PGO",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Origin of the Profile-Guided Optimization concept: real measured data, not assumptions, drives allocation."
+        },
+        {
+          "concept_id": "C_MILP",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Murakkab's optimizer core is a MILP; this project explicitly replaces it with a heuristic while keeping MILP as an optional offline baseline."
+        }
+      ],
+      "caveats": "This entry is reconstructed from a compressed handoff description, not from the original PDF. Verbatim excerpts and precise numeric results need to be re-derived from the source paper if strict archival fidelity is required."
+    },
+    {
+      "id": "P2",
+      "short_name": "Dynamic Orchestration of Data Pipelines via Agentic AI",
+      "full_citation": "Koppolu, et al. (2025). Dynamic Orchestration of Data Pipelines via Agentic AI. Metallurgical and Materials Engineering.",
+      "role": "supporting",
+      "role_label": "Vocabulary source only, not a credibility-bearing citation",
+      "status": "considered_not_cited",
+      "summary": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY] Proposes agentic AI for dynamically orchestrating data pipelines; introduces AAF/WOO/RDF-style formula vocabulary. Flagged for quality concerns: non-CS venue, weak reference list.",
+      "full_detail": {
+        "problem": "[Not re-derivable without the source PDF.]",
+        "method": "[Not re-derivable without the source PDF.]",
+        "results": "[Not re-derivable without the source PDF.]",
+        "limitations": "Published in a non-CS (materials engineering) venue with a weak reference list, which undermines its use as a credibility-bearing citation despite potentially useful vocabulary.",
+        "numbers": []
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_STATIC_DYNAMIC",
+          "strength": "medium",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: P2 supports the static-vs-dynamic allocation framing (medium strength)."
+        },
+        {
+          "concept_id": "C_FORMAL_OBJ",
+          "strength": "medium",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: P2 contributes to formal allocation/objective-function vocabulary (AAF/WOO/RDF-style formulas)."
+        },
+        {
+          "concept_id": "C_EVAL_METRICS",
+          "strength": "medium",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: P2 contributes general evaluation-metrics vocabulary."
+        },
+        {
+          "concept_id": "C_DAG",
+          "strength": "weak",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: weak/tangential link to DAG-based workflow execution."
+        }
+      ],
+      "caveats": "This entry is reconstructed from a compressed handoff description only; original PDF not available in this session. Status noted as considered_not_cited \u2014 useful only for terminology, not citation."
+    },
+    {
+      "id": "P3",
+      "short_name": "Fast Heterogeneous Serving",
+      "full_citation": "Cheng, J., & Nguyen, D. T. (2026). Scalable Joint Resource Allocation for SLO-Constrained LLM Inference in Heterogeneous GPU Clouds. arXiv:2604.07472.",
+      "role": "foundation",
+      "role_label": "Strongest technical precedent found so far for the MILP-to-heuristic move",
+      "status": "recommended_add_to_references",
+      "summary": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY] Introduces a Greedy Heuristic / Adaptive Greedy Heuristic for SLO-constrained LLM inference resource allocation across heterogeneous GPU clouds, reporting 260x+ speedup over exact solving with near-optimal cost and graceful degradation under uncertainty. Introduces C_FEASFIRST (feasibility-first filtering before cost-ranking).",
+      "full_detail": {
+        "problem": "[Not re-derivable without the source PDF.]",
+        "method": "Greedy Heuristic / Adaptive Greedy Heuristic that performs feasibility-first filtering (discard infeasible allocations under SLO constraints) before cost-based ranking of remaining candidates.",
+        "results": "260x+ speedup relative to exact (presumably MILP-class) solving, near-optimal cost, graceful degradation under uncertainty.",
+        "limitations": "[Not re-derivable without the source PDF.]",
+        "numbers": [
+          "260x+ speedup vs exact solving (as reported in prior-session summary)"
+        ]
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_HEURISTIC",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Direct LLM-specific precedent for replacing an exact/MILP-class solver with a fast heuristic, the core move this project makes."
+        },
+        {
+          "concept_id": "C_FEASFIRST",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Origin of the feasibility-first-then-cost-rank pattern, reusable in this project's own DAG-walking allocator."
+        },
+        {
+          "concept_id": "C_MILP",
+          "strength": "strong",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: P3 is framed partly against MILP exact solving as the baseline it improves on."
+        },
+        {
+          "concept_id": "C_STATIC_DYNAMIC",
+          "strength": "medium",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: supports static-vs-dynamic allocation framing."
+        },
+        {
+          "concept_id": "C_EVAL_METRICS",
+          "strength": "medium",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: contributes evaluation-metrics vocabulary."
+        },
+        {
+          "concept_id": "C_FORMAL_OBJ",
+          "strength": "medium",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: contributes formal objective-function framing."
+        },
+        {
+          "concept_id": "C_DRIFT",
+          "strength": "weak",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: tangential/weak link to drift-correction (graceful degradation under uncertainty is adjacent but not the same mechanism)."
+        }
+      ],
+      "caveats": "This entry is reconstructed from a compressed handoff description, not from the original PDF. Recommended for actual addition to the Idea Paper's reference list per prior session's conclusion."
+    },
+    {
+      "id": "P4",
+      "short_name": "RouteLLM",
+      "full_citation": "Ong, I., Almahairi, A., Wu, V., Chiang, W-L., Wu, T., Gonzalez, J. E., Kadous, M. W., & Stoica, I. (2024/2025, ICLR). RouteLLM: Learning to Route LLMs with Preference Data. arXiv:2406.18665.",
+      "role": "supporting",
+      "role_label": "Evaluation-metric source; scope mismatch on core mechanism",
+      "status": "considered_partial_add",
+      "summary": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY] Routes individual queries to one of two existing LLMs using human preference data. Flagged as a scope mismatch: this is model *selection between existing LLMs* per query, not joint model+hardware+config allocation across a DAG. Useful for its PGR/APGR-style quality-cost evaluation metrics.",
+      "full_detail": {
+        "problem": "[Not re-derivable without the source PDF.]",
+        "method": "Learns a router, trained on human preference data, that assigns each incoming query to one of two candidate LLMs (a strong/expensive model or a weak/cheap model).",
+        "results": "[Not re-derivable without the source PDF.]",
+        "limitations": "Per-call, two-model routing \u2014 does not address joint multi-resource (model+hardware+parallelism) allocation across a multi-step workflow, which is this project's actual problem.",
+        "numbers": []
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_LEARNED_ROUTING",
+          "strength": "medium",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Represents the learned per-query routing paradigm this project's problem differs from (whole-DAG, multi-resource allocation vs per-call two-model routing)."
+        },
+        {
+          "concept_id": "C_QUALITY_COST_METRIC",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Source of PGR/APGR-style quality-cost evaluation metrics usable in this project's own evaluation methodology."
+        },
+        {
+          "concept_id": "C_HEURISTIC",
+          "strength": "weak",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: weak/tangential link to heuristic allocation."
+        },
+        {
+          "concept_id": "C_EVAL_METRICS",
+          "strength": "medium",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: contributes evaluation-metrics vocabulary."
+        },
+        {
+          "concept_id": "C_DRIFT",
+          "strength": "weak",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: weak/tangential link to drift-correction."
+        }
+      ],
+      "caveats": "This entry is reconstructed from a compressed handoff description, not from the original PDF."
+    },
+    {
+      "id": "P5",
+      "short_name": "RouteJudge / ORBIT",
+      "full_citation": "Lai, Hu, & Ye (2026). RouteJudge/ORBIT. arXiv:2606.18774.",
+      "role": "supporting",
+      "role_label": "Evaluation methodology source; same scope mismatch as P4",
+      "status": "considered_partial_add",
+      "summary": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY] Same per-query routing scope mismatch as RouteLLM. Useful for online preference-based evaluation methodology and curve-level metrics (nAUC, Peak Score, QNC, Routing Collapse Index), plus a standardized-tooling design pattern for building a fair comparison harness \u2014 feeds this project's Scope Item 3 (Evaluation), the best-covered scope item in the map.",
+      "full_detail": {
+        "problem": "[Not re-derivable without the source PDF.]",
+        "method": "Online, preference-based evaluation methodology for LLM routers, using curve-level metrics rather than single-point accuracy: nAUC, Peak Score, QNC (Quality-Normalized Cost, or similarly named), and Routing Collapse Index (RCI). Provides standardized tooling for building a fair comparison harness across routing methods.",
+        "results": "[Not re-derivable without the source PDF.]",
+        "limitations": "Same scope mismatch as P4 \u2014 evaluates per-query routing among existing models, not multi-resource DAG-level allocation.",
+        "numbers": []
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_ONLINE_PREF_EVAL",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Source of the online preference-based evaluation methodology this project's own evaluation plan can borrow from."
+        },
+        {
+          "concept_id": "C_CURVE_METRICS",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Source of curve-level metrics (nAUC, Peak Score, QNC, RCI) as candidate evaluation metrics beyond single-point accuracy."
+        },
+        {
+          "concept_id": "C_STANDARDIZED_TOOLING",
+          "strength": "medium",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Design-pattern precedent for building a standardized, fair comparison harness, relevant to this project's fault-injection evaluation tooling."
+        },
+        {
+          "concept_id": "C_EVAL_METRICS",
+          "strength": "medium",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: contributes evaluation-metrics vocabulary."
+        },
+        {
+          "concept_id": "C_QUALITY_COST_METRIC",
+          "strength": "medium",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: contributes quality-cost tradeoff metric vocabulary."
+        },
+        {
+          "concept_id": "C_HEURISTIC",
+          "strength": "weak",
+          "excerpt": "[re-derive from PDF]",
+          "detail": "Reconstructed per ground-truth relationship map: weak/tangential link to heuristic allocation."
+        }
+      ],
+      "caveats": "This entry is reconstructed from a compressed handoff description, not from the original PDF."
+    },
+    {
+      "id": "P6",
+      "short_name": "AgentOpt",
+      "full_citation": "Hua, W., Karne, S., Xie, Q., Agrawal, A., Pagonas, N., Kaffes, K., & Peng, T. (2026). AgentOpt v0.1 Technical Report: Client-Side Optimization for LLM-Based Agent. arXiv:2604.06296v2.",
+      "role": "supporting",
+      "role_label": "Client-side model-combination selection framework; strong conceptual and evaluation-methodology overlap with S1/S2, direct precedent for treating model assignment as a combinatorial search problem",
+      "status": "considered_partial_add",
+      "summary": "Introduces AGENTOPT, a framework-agnostic Python package for client-side optimization of multi-step agent pipelines, focused first on model-combination selection: given a pipeline with multiple roles and a candidate model pool per role, find the cost-effective model-to-role assignment via black-box combinatorial search (ten algorithms, notably Matrix UCB-E), rather than per-call routing. Central empirical finding: best combination does not equal the combination of best individual models \u2014 role interactions dominate, with 13-32x cost gaps between combinations at matched accuracy, and Matrix UCB-E recovering near-optimal accuracy at 62-76% less evaluation cost than brute force.",
+      "full_detail": {
+        "problem": "Existing agent-efficiency research is almost entirely server-side (caching, speculative execution, scheduling, load balancing), optimizing shared provider infrastructure. But developers building agent pipelines from heterogeneous models, tools, and APIs face a distinct client-side problem: how to allocate model choice, local tools, and API budget across pipeline stages/roles, subject to application-specific quality-cost-latency constraints that only the developer (not the provider) knows. Within client-side optimization, model selection is argued to be the dominant lever because it is upstream of every other optimization (caching/scheduling only matter after models are fixed), and because model quality is role-dependent, not a context-free property of the model in isolation \u2014 so the optimization unit must be the full model combination across all pipeline roles, evaluated end-to-end, not per-call routing of individual queries.",
+        "method": "Formalizes a pipeline with H roles and candidate model set(s) M_i per role; a 'combo' c = (m1,...,mH) is one full assignment. Executing combo c on the dataset induces trajectory tau(c) with measured PERF, LATENCY, COST; utility J(c) = U(PERF, LATENCY, COST), goal c* = argmax J(c) over the combinatorial space C = product of M_i (size can be exponential in number of roles). This is framed as a black-box / pure-exploration multi-armed-bandit problem: each combo is an arm, pulling it means evaluating on one datapoint. AGENTOPT implements ten search algorithms to explore this space sample-efficiently: Brute-force, Random search, Matrix UCB-E (treats the combo-by-datapoint grid as a matrix, UCB score = mean + sqrt(a/n), batches evaluation toward highest-UCB combo), Matrix UCB-E-LRF (adds a low-rank factorization ensemble to predict unobserved grid cells and target high-uncertainty cells), Arm Elimination (default method; rounds of evaluation with elimination of combos whose upper bound falls below current leader's lower bound), Epsilon-LUCB (targets epsilon-optimal best-arm ID via leader/challenger sampling), Threshold Successive Elimination (finds all combos above a quality threshold rather than the single best), Hill Climbing (local search over a role-by-role neighborhood, multiple random restarts), Bayesian Optimization (surrogate model + acquisition function, via BoTorch), and LM Proposal (uses an LLM to propose promising combos before empirical evaluation, without exhaustive search). Systems-wise, AGENTOPT is framework-agnostic: it intercepts LLM calls at the HTTP transport layer (patching httpx.Client.send / AsyncClient.send) and uses Python contextvars to attribute each call to the current datapoint and combo, requiring no changes to agent code. It includes HTTP-level response caching (keyed by request-payload hash, persisted to SQLite, preserving original latency even on cache hits) and a two-level semaphore for bounded parallel evaluation (across combos and across datapoints within a combo). Output is a ranked SelectionResults object with a Pareto frontier over accuracy/cost/latency, exportable to CSV/YAML.",
+        "results": "Evaluated on 9 models via AWS Bedrock (Claude Opus 4.6, Claude Haiku 4.5, Claude 3 Haiku, gpt-oss-120b, gpt-oss-20b, Kimi K2.5, Qwen3 Next 80B A3B, Qwen3 32B, Ministral 3 8B) across four benchmarks: HotpotQA (199 examples, 2-role planner-solver, 81 combos), GPQA Diamond (198 examples, single-role, 9 combos), MathQA (200 examples, 2-role answerer-critic, 81 combos), BFCL v3 Multi-Turn (200 examples, single-role, 9 combos). Central finding: at matched accuracy, cost gap between best and worst model combinations ranges 13-32x across benchmarks (e.g. on BFCL, Qwen3 Next 80B matches Claude Opus 4.6 accuracy at 32x lower cost). On HotpotQA, Claude Opus 4.6 (the strongest standalone model) is the worst planner across all 81 combinations because it tends to answer directly and bypass the solver's search tools; the best combo pairs the cheapest planner (Ministral 3 8B) with Opus as solver, reaching 74.27% accuracy vs only 31.71% when Opus is used for both roles. On algorithm comparison (50-seed averages): Matrix UCB-E is the strongest selector overall, recovering near-optimal accuracy while observing only ~20% of the evaluation grid, giving 62-76% cost savings vs brute force (e.g. HotpotQA: 73.54% mean acc at budget 0.2 vs 74.27% ground truth, using 3,234 evals vs 16,168 for brute force). Matrix UCB-E-LRF underperforms plain Matrix UCB-E despite its added complexity. Arm Elimination and Hill Climbing perform comparably on average (78.9% vs 79.1% mean accuracy across benchmarks) but Hill Climbing is sensitive to search-space topology (100% find rate on BFCL/GPQA, drops to 52% find rate on HotpotQA where the optimum is counterintuitive). LM Proposal (using an LLM's priors to propose combos) works only when raw capability predicts performance (GPQA) and fails badly where role interactions are non-obvious (HotpotQA, BFCL).",
+        "limitations": "Framed as a v0.1 technical report; model selection is presented as only the 'first functionality' of a broader intended client-side optimization package (future work explicitly includes adaptive routing, tool selection, scheduling, personalized utility-aware policies). Evaluation is limited to text/tool-use benchmarks with 2-role pipelines at most (no evidence yet for deeper/longer DAGs). Brute-force ground truth itself is nontrivial in cost even for 2-role, moderate-size pipelines (up to ~$124 for MathQA's 81-combo grid), which is the same tractability problem this project's own heuristic approach is designed to sidestep, but AGENTOPT addresses it via sample-efficient *search* over a fixed, whole-DAG-known set of combos rather than a *drift-adaptive, single-pass* heuristic scoring walk \u2014 a different design point from this project's DAG-walking allocator.",
+        "numbers": [
+          "13-32x cost gap between best/worst model combinations at matched accuracy across benchmarks",
+          "HotpotQA best combo (Ministral 3 8B planner + Claude Opus 4.6 solver): 74.27% accuracy, $51.90 brute-force cost over 81 combos",
+          "HotpotQA worst-region: Opus-as-planner combos cluster near 31.7-32.0% accuracy across all 9 solver choices (ranks 71-79 of 81)",
+          "MathQA best combo (Opus answerer + Haiku 4.5 critic): 98.84% accuracy, $123.87 brute-force cost over 81 combos",
+          "BFCL: three models (Opus 4.6, Kimi K2.5, Qwen3 Next 80B) tie at 70.00% accuracy; Qwen3 Next costs 32x less than Opus",
+          "GPQA Diamond best: Claude Opus 4.6 single-role, 74.75% accuracy, $4.71 brute-force cost over 9 combos",
+          "Matrix UCB-E at budget fraction 0.2 recovers 62-76% cost savings vs brute force across all four benchmarks while staying near-optimal",
+          "Matrix UCB-E (budget 0.2) HotpotQA: 73.54% mean acc (vs 74.27% brute-force optimum), 3,234 evals vs 16,168 brute force"
+        ]
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_COMBO_SELECTION",
+          "concept_id_note": "new concept introduced by this paper",
+          "strength": "strong",
+          "excerpt": "combo abstraction as the appropriate unit of evaluation",
+          "detail": "AgentOpt's central contribution: treating a full model-to-role assignment across the whole pipeline (not a per-call routing decision) as the atomic unit of optimization \u2014 directly analogous to this project's own move of assigning model+hardware+config once per whole DAG rather than per task in isolation."
+        },
+        {
+          "concept_id": "C_DAG",
+          "strength": "medium",
+          "excerpt": "N-role agent workflow",
+          "detail": "AgentOpt's pipeline-with-roles formulation is structurally similar to a DAG of tasks, though the paper treats pipelines somewhat more loosely (roles in sequence/interaction) than this project's explicit topological-DAG execution model; still directly supports the 'decide once per whole workflow, not per call' framing this project uses."
+        },
+        {
+          "concept_id": "C_HEURISTIC",
+          "strength": "medium",
+          "excerpt": "sample-efficient search",
+          "detail": "AgentOpt's bandit/heuristic search algorithms (Arm Elimination, Matrix UCB-E, Hill Climbing) are a different flavor of 'avoid exact/exhaustive solving' than this project's single-pass topological scoring heuristic, but share the same underlying motivation: exact/exhaustive evaluation over the full assignment space is too costly, so a cheaper approximate method is substituted."
+        },
+        {
+          "concept_id": "C_BANDIT_SEARCH",
+          "concept_id_note": "new concept introduced by this paper",
+          "strength": "strong",
+          "excerpt": "pure-exploration multi-armed bandit problem",
+          "detail": "AgentOpt formalizes model-combination selection as a multi-armed bandit / black-box optimization problem and implements ten search algorithms (bandit-based, local-search, and surrogate-based) for it \u2014 the most directly reusable algorithmic toolkit found so far for exploring a combinatorial config space cheaply, relevant to this project's own allocator if it is ever extended beyond single-pass greedy scoring."
+        },
+        {
+          "concept_id": "C_CLIENT_SIDE_OPT",
+          "concept_id_note": "new concept introduced by this paper",
+          "strength": "strong",
+          "excerpt": "client-side optimization",
+          "detail": "Articulates a clean conceptual split this project also relies on implicitly: server-side/provider infrastructure optimization (scheduling, caching, load balancing) vs client-side/developer-controlled optimization (which model, which resource, per role/task) \u2014 useful vocabulary and framing for positioning this project's own allocator as a client-side, application-aware system."
+        },
+        {
+          "concept_id": "C_EVAL_METRICS",
+          "strength": "medium",
+          "excerpt": "Pareto frontier over accuracy, cost, and latency",
+          "detail": "AgentOpt's evaluation reports a Pareto frontier over the same three axes (performance/quality, cost, latency) this project's own evaluation plan targets, and demonstrates a concrete way to quantify and visualize that tradeoff empirically."
+        },
+        {
+          "concept_id": "C_STATIC_DYNAMIC",
+          "strength": "weak",
+          "excerpt": "not per-call routing",
+          "detail": "AgentOpt explicitly scopes itself away from dynamic per-call/runtime routing, treating model assignment as fixed once selected via offline search over a labeled evaluation set \u2014 closer to this project's 'decide once per workflow instance' framing than to this project's own drift-correction mechanism, which does adapt post-execution; worth noting as a contrast rather than direct support."
+        },
+        {
+          "concept_id": "C_TRANSPORT_INTERCEPT",
+          "concept_id_note": "new concept introduced by this paper",
+          "strength": "strong",
+          "excerpt": "intercepting requests at the HTTP transport layer",
+          "detail": "AgentOpt's systems mechanism for framework-agnostic measurement: patches httpx.Client.send/AsyncClient.send and uses Python contextvars to attribute each LLM call to its datapoint/combination without touching agent code. This is a concrete, reusable engineering pattern this project could adopt for its own profiling layer (measuring real cost/latency/reliability per task without instrumenting every agent framework by hand)."
+        }
+      ],
+      "caveats": "AgentOpt's core mechanism (search over a fixed model-combination space using a labeled evaluation dataset, selecting once via bandit/local-search before deployment) is a different design point from this project's drift-correcting, single-pass, per-execution heuristic allocator \u2014 flag as a scope difference, not equivalence, when citing. Best framed as (a) strong support for the 'assign per whole pipeline, not per call, because role interactions dominate' argument (supports C_COMBO_SELECTION / C_DAG), and (b) a source of reusable systems engineering patterns (HTTP transport-layer interception, Pareto-frontier evaluation reporting) rather than as a source for the drift-correction or DAG-topological-walk mechanisms themselves. Given the project's identified structural gap (S1 is thin, only C_DAG), this paper's combo/pipeline framing is a reasonable, if partial, contribution to S1 as well as S2 \u2014 worth flagging to the user given the standing instruction to prioritize S1-strengthening papers."
+    },
+    {
+      "id": "P7",
+      "short_name": "MASTER (MARL for PPM)",
+      "full_citation": "Bruinaars, P. (2025). A Multi-Agent Reinforcement Learning Approach to Prescriptive Process Monitoring. MSc Thesis, Utrecht University. Supervisors: X. Lu, S. Wang.",
+      "role": "supporting",
+      "role_label": "Adjacent-domain precedent for decentralized, agent-per-resource task allocation under partial observability; strong methodological parallel for S1 (workflow/task execution modeling) and S3 (baseline-driven evaluation), different mechanism (learned RL policy vs. profile-guided heuristic scoring) for S2",
+      "status": "considered_partial_add",
+      "summary": "Presents MASTER, a Dec-POMDP-based multi-agent simulation environment for Business Process Optimization / Prescriptive Process Monitoring, where each resource (human or machine) executing tasks in a business process is modeled as an autonomous agent with partial observability, learning (via MAPPO or QMIX) when to volunteer for upcoming tasks from an event-log-driven task stream. Evaluated on three real/semi-synthetic datasets (CVS Pharmacy, Loan application, BPI12W) against three baselines (random, best-median, ground-truth), using throughput/waiting/processing time as metrics with non-parametric statistical testing (Kruskal-Wallis, Mann-Whitney U with Bonferroni, Cliff's delta). Results are mixed and dataset-dependent: QMIX generally outperforms MAPPO, MAPPO does best on CVS, QMIX on BPI12W, and both struggle on the loan-application dataset \u2014 no MARL approach uniformly beats the simple ground-truth/random baselines.",
+      "full_detail": {
+        "problem": "Existing RL approaches to Business Process Optimization (BPO) and Prescriptive Process Monitoring (PPM) assume a single centralized agent with full visibility over the process and its resources, which is unrealistic for real, distributed processes where many human/automated actors act with only local, partial information and must coordinate implicitly. No prior work had systematically applied Multi-Agent RL (MARL), modeling each resource as its own decision-making agent, to PPM/BPO using real event-log data.",
+        "method": "Models the business process environment as a Dec-POMDP: each resource (employee/machine) that can execute activities is an autonomous agent with a fixed set of capabilities (activities it can perform, with per-activity historical performance PDFs), a task queue, and a learned policy \u2014 no explicit 'type' or fixed schedule (simplified relative to the related AgentSimulator work). At each timestep, an upcoming task arrives from a stream (derived from the process's event log); agents each choose a binary action ('volunteer' or not) based on a partial observation (upcoming task identity, their own historical performance stats on that task type, current queue length, remaining duration of their current task, and capability flag for the upcoming task). If multiple agents volunteer, one is picked at random among capable volunteers; if none volunteer, one is picked at random among all capable agents. The task is added to the winning agent's FIFO queue. Reward is simply the negative throughput time of each task as it completes (f(d) = -d, d = completion_time - assigned_time), a deliberately simple, dataset-agnostic reward. Two MARL algorithms are trained on top of this environment: MAPPO (multi-agent PPO, on-policy, actor-critic with centralized-training-decentralized-execution/CTDE, clipped surrogate objective) and QMIX (value-based, off-policy, CTDE, per-agent Q-functions combined via a monotonic mixing network into a global Q-value, avoiding the exponential blow-up of the joint action space). The environment is implemented as a parallel PettingZoo environment (rebuilt from scratch rather than reusing the prior AgentSimulator/Mesa codebase, since Mesa isn't designed for MARL). Training is fully offline (80/20 train/test split on whole days of event-log data, non-overlapping start times), organized into training blocks (one full simulation pass per block, buffered and used to update policies over several epochs). Evaluation compares the resulting throughput/waiting/processing-time distributions against three baselines \u2014 random assignment, best-median-performer assignment, and ground-truth (as-logged) assignment \u2014 using Kolmogorov-Smirnov normality tests (which reliably fail, given heavy-tailed event-log data), Kruskal-Wallis H-tests for overall significance, and pairwise Mann-Whitney U-tests with Bonferroni correction plus Cliff's delta effect sizes.",
+        "results": "On the CVS Pharmacy dataset (6 resources, 15 activities, 10,000 traces): MAPPO gives a slight but statistically significant improvement in median throughput time over ground truth (driven by processing time, at a small cost in waiting time); QMIX performs statistically indistinguishable from random/ground-truth baselines but significantly beats the best-median baseline. On the Loan application dataset (19 resources, 12 activities, 1,000 traces): both MAPPO and QMIX perform worse than ground truth and random baselines on most metrics (though both beat the poor best-median baseline by a large margin) \u2014 the paper attributes this to long task durations combined with the one-task-per-agent-at-a-time assumption. On BPI12W (52 resources, 6 activities, 8,616 traces, real-world event log): QMIX is the best performer overall, beating all baselines and MAPPO on throughput and waiting time with small-to-large effect sizes, achieving a median throughput time over an hour faster than the next-best (ground-truth) baseline; MAPPO improves processing time but has worse waiting time than ground truth/random, netting a worse median throughput. Overall: QMIX generally outperforms MAPPO across datasets, but MAPPO wins on CVS specifically, so the thesis concludes there isn't enough evidence that one algorithm dominates the other; performance is highly dataset-dependent (interacting with number of resources, number of unique activities, and volume of training data).",
+        "limitations": "Explicitly exploratory/first-of-its-kind work: no formal hyperparameter tuning was performed (fixed hyperparameters chosen from preliminary experimentation, not grid search or Bayesian optimization); the simplified environment assumes each agent can work on only one task at a time and each case has only one active task/agent at a time, which the thesis itself flags as likely responsible for the poor loan-application results; the reward function (simple negative-throughput-time) is acknowledged as possibly numerically unstable and not necessarily optimal; conflict resolution when multiple/no agents volunteer is fully random, which the author suggests may be actively hurting performance and could be improved via inter-agent communication; results do not show a uniformly effective MARL approach \u2014 it sometimes underperforms even the trivial random-assignment baseline.",
+        "numbers": [
+          "CVS: MAPPO median throughput 46.49 min vs ground-truth 47.85 min (small improvement); QMIX median throughput 47.85 min (~tied with ground truth)",
+          "CVS Kruskal-Wallis throughput: H=4808.18, epsilon^2=0.075, p<0.001",
+          "Loan application: MAPPO median throughput 3506.54 min vs ground-truth 2068.81 min (worse); best-median baseline median throughput 19437.93 min (far worse than all learned/other baselines)",
+          "BPI12W: QMIX median throughput 119.56 min vs ground-truth 182.69 min (QMIX more than an hour faster at the mean/tail level); best-median baseline catastrophic at 536366.57 min median throughput",
+          "Three datasets span 6/19/52 resources and 15/12/6 activity types (CVS/Loan/BPI12W), deliberately chosen to vary agent-count while keeping data volume workable for MARL training"
+        ]
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_DECPOMDP",
+          "strength": "strong",
+          "excerpt": "structured as a Dec-POMDP",
+          "detail": "Origin, in this map, of the Dec-POMDP framing: each resource/executor is modeled as an autonomous agent with only partial, local observability of the environment (its own queue, performance history, and the upcoming task), directly analogous to how this project's own DAG-executing profiled resources have only local/measured information rather than global omniscience."
+        },
+        {
+          "concept_id": "C_MARL_ALLOC",
+          "strength": "strong",
+          "excerpt": "learn optimal task allocations",
+          "detail": "Central mechanism of the paper: task-to-resource assignment is learned via trained RL policies (MAPPO/QMIX) rather than computed by a heuristic scoring function or solved via MILP. This is a genuinely different allocation mechanism than this project's profile-guided heuristic \u2014 useful as a contrast/alternative-design-space paper: it shows what a *learned* (not profiled/heuristic) allocation policy looks like for essentially the same class of problem (assign incoming tasks/work-items to capable resources under partial information to optimize throughput)."
+        },
+        {
+          "concept_id": "C_DAG",
+          "strength": "weak",
+          "excerpt": "sequence of tasks",
+          "detail": "Each case is a sequence of tasks (a linear, not general-DAG, structure in this implementation), and the environment processes a stream of such sequences rather than a single whole-DAG-known-in-advance workflow \u2014 a looser structural analogy to this project's DAG model, worth noting as a scope difference: MASTER's agents decide per-task, online, without seeing the whole case's structure in advance, which is closer to per-call routing than this project's whole-DAG-before-assignment framing."
+        },
+        {
+          "concept_id": "C_STATIC_DYNAMIC",
+          "strength": "medium",
+          "excerpt": "adapt to new situations",
+          "detail": "MASTER's agents continuously learn and adapt their volunteering policy from experience (via RL training), which is conceptually adjacent to this project's own drift-correction/self-updating profile idea, though the mechanism differs sharply: MASTER trains a neural policy via reward signal over many episodes, whereas this project's drift-correction is a lightweight exponential-moving-average nudge to a profiled estimate after each real execution, not a trained policy."
+        },
+        {
+          "concept_id": "C_BASELINE_STATTEST",
+          "strength": "strong",
+          "excerpt": "three baselines",
+          "detail": "Provides a concrete, reusable evaluation template directly relevant to this project's own planned fault-injection evaluation: compare the proposed approach against multiple named baselines (here: random assignment, best-median/greedy-heuristic assignment, and ground-truth/as-logged assignment) using throughput/waiting/processing-time distributions, tested for significance with Kruskal-Wallis + Mann-Whitney U + Bonferroni correction and reported with Cliff's delta effect sizes rather than raw p-values alone \u2014 a rigorous, non-parametric-appropriate methodology given that real system/event-log timing data is reliably heavy-tailed and non-normal."
+        },
+        {
+          "concept_id": "C_EVAL_METRICS",
+          "strength": "medium",
+          "excerpt": "throughput, waiting, and processing",
+          "detail": "Uses throughput time, waiting time, and processing time as its core evaluation metrics \u2014 directly analogous to (and a validated precedent for) the cost/latency/reliability-style metrics this project's own evaluation plan intends to use, and demonstrates decomposing a single end-to-end time metric (throughput) into its waiting vs. processing components to diagnose *where* an allocation policy is winning or losing, a useful diagnostic pattern for this project's own fault-injection evaluation."
+        }
+      ],
+      "caveats": "Different application domain (human/machine resource allocation in classical business processes, e.g. pharmacy/loan-application workflows) rather than LLM-agent/model+hardware allocation, so it is not a directly citable technical precedent for this project's core Murakkab-derived mechanism. Its main value here is (a) a structurally similar decentralized, partial-observability, agent-per-resource framing that could strengthen the thin S1 (Workflow Orchestration) scope item, and (b) a rigorous, reusable non-parametric baseline-comparison evaluation methodology directly transferable to this project's own fault-injection evaluation plan (S3). Its central empirical finding \u2014 that a learned MARL policy does not uniformly beat simple baselines and is highly dataset-dependent \u2014 is also a useful cautionary data point when scoping expectations for this project's own heuristic allocator's evaluation. Recommend citing narrowly for the Dec-POMDP/partial-observability framing and the baseline+statistical-testing methodology, not for the allocation mechanism itself, which this project has already deliberately chosen not to pursue (learned RL policy vs. profile-guided heuristic scoring are different design points)."
+    }
+  ]
+}

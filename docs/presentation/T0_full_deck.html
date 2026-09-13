@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>T0 — Profile-Guided Multi-Workflow Resource Orchestration</title>
+<style>
+  :root{
+    --surface-0:#f4f4f2; --surface-1:#fcfcfb; --surface-2:#ececea;
+    --text-primary:#0b0b0b; --text-secondary:#52514e; --text-muted:#7a7975;
+    --rule:#d9d9d5; --rule-strong:#b9b9b3;
+    --series-1:#2a78d6; --series-2:#eb6834; --series-3:#1baf7a;
+    --accent:#2a78d6;
+    --good:#1baf7a; --warn:#eda100; --bad:#e34948;
+    --code-bg:#f0f0ed;
+    color-scheme:light;
+  }
+  :root[data-theme="dark"]{
+    --surface-0:#111110; --surface-1:#1a1a19; --surface-2:#242422;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --text-muted:#918f86;
+    --rule:#33332f; --rule-strong:#4b4b45;
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+    --accent:#3987e5;
+    --good:#199e70; --warn:#c98500; --bad:#e66767;
+    --code-bg:#242422;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  body{
+    background:var(--surface-0); color:var(--text-primary);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  code,kbd,pre{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace}
+
+  /* ---------- deck chrome ---------- */
+  #bar{
+    position:fixed;top:0;left:0;right:0;height:44px;z-index:50;
+    background:var(--surface-1);border-bottom:1px solid var(--rule);
+    display:flex;align-items:center;gap:14px;padding:0 16px;
+  }
+  #bar .t{font-size:12.5px;color:var(--text-secondary);letter-spacing:.02em}
+  #bar .sp{flex:1}
+  #bar button{
+    font:inherit;font-size:12.5px;padding:5px 11px;border-radius:7px;
+    border:1px solid var(--rule-strong);background:var(--surface-2);
+    color:var(--text-primary);cursor:pointer;
+  }
+  #bar button:hover{border-color:var(--accent)}
+  #count{font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--text-secondary);min-width:62px;text-align:right}
+  #prog{position:fixed;top:44px;left:0;height:2px;background:var(--accent);z-index:51;transition:width .18s ease}
+
+  #deck{padding:76px 0 120px}
+  .slide{
+    display:none; max-width:1080px; margin:0 auto; padding:0 40px 40px;
+    animation:fade .22s ease;
+  }
+  .slide.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+  .eyebrow{
+    font-size:11.5px;letter-spacing:.10em;text-transform:uppercase;
+    color:var(--text-muted);margin:0 0 10px;font-weight:600;
+  }
+  h1{font-size:40px;line-height:1.14;margin:0 0 14px;letter-spacing:-.022em;font-weight:680}
+  h2{font-size:29px;line-height:1.2;margin:0 0 16px;letter-spacing:-.018em;font-weight:660}
+  h3{font-size:17px;margin:26px 0 9px;font-weight:640;letter-spacing:-.005em}
+  p{margin:0 0 13px;max-width:76ch;color:var(--text-secondary)}
+  p.lead{font-size:19px;line-height:1.5;color:var(--text-primary);max-width:70ch}
+  strong{color:var(--text-primary);font-weight:640}
+  ul{margin:0 0 14px;padding-left:20px;max-width:76ch;color:var(--text-secondary)}
+  li{margin:0 0 7px}
+  .muted{color:var(--text-muted)}
+  .small{font-size:13.5px}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+  .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+  table{border-collapse:collapse;width:100%;margin:6px 0 16px;font-size:14px}
+  th,td{text-align:left;padding:8px 11px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);font-weight:640}
+  td{color:var(--text-secondary)}
+  td strong{color:var(--text-primary)}
+  tbody tr:last-child td{border-bottom:none}
+  .num{font-variant-numeric:tabular-nums}
+
+  pre{
+    background:var(--code-bg);border:1px solid var(--rule);border-radius:9px;
+    padding:14px 16px;overflow:auto;font-size:13px;line-height:1.5;color:var(--text-primary);
+    margin:0 0 14px;
+  }
+  code{background:var(--code-bg);padding:1px 5px;border-radius:4px;font-size:.9em}
+  pre code{background:none;padding:0}
+
+  .card{background:var(--surface-1);border:1px solid var(--rule);border-radius:12px;padding:18px 20px;margin:0 0 14px}
+  .card h3{margin-top:0}
+  .flag{border-left:3px solid var(--warn);padding-left:14px;margin:0 0 14px}
+  .flag.bad{border-left-color:var(--bad)}
+  .flag.good{border-left-color:var(--good)}
+
+  /* stat tiles */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:4px 0 18px}
+  .tile{background:var(--surface-1);border:1px solid var(--rule);border-radius:12px;padding:16px 18px}
+  .tile .k{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);font-weight:640;margin-bottom:7px}
+  .tile .v{font-size:33px;line-height:1;font-weight:680;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--text-primary)}
+  .tile .s{font-size:12.5px;color:var(--text-secondary);margin-top:7px}
+  .tile.hero .v{font-size:44px}
+
+  /* charts */
+  figure{margin:0 0 16px}
+  figcaption{font-size:12.5px;color:var(--text-muted);margin-top:8px;max-width:76ch}
+  .figtitle{font-size:15px;font-weight:640;color:var(--text-primary);margin:0 0 3px}
+  .figsub{font-size:13px;color:var(--text-secondary);margin:0 0 12px}
+  .viz{background:var(--surface-1);border:1px solid var(--rule);border-radius:12px;padding:18px 20px 14px}
+  svg{display:block;overflow:visible}
+  .axis line,.axis path{stroke:var(--rule-strong);stroke-width:1}
+  .grid line{stroke:var(--rule);stroke-width:1}
+  .tick{font-size:12px;fill:var(--text-muted)}
+  .barlabel{font-size:12.5px;font-weight:640;fill:var(--text-primary);font-variant-numeric:tabular-nums}
+  .catlabel{font-size:12.5px;fill:var(--text-secondary)}
+  .zero{stroke:var(--text-muted);stroke-width:1.5;stroke-dasharray:3 3}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:2px 0 12px;font-size:12.5px;color:var(--text-secondary)}
+  .legend .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .tblbtn{font:inherit;font-size:12px;padding:4px 9px;border-radius:6px;border:1px solid var(--rule-strong);
+          background:var(--surface-2);color:var(--text-secondary);cursor:pointer;margin-top:10px}
+  .datatable{display:none;margin-top:12px}
+  .datatable.on{display:block}
+
+  /* speaker notes */
+  .notes{
+    display:none;margin-top:22px;padding:16px 18px;border-radius:12px;
+    background:var(--surface-2);border:1px dashed var(--rule-strong);
+  }
+  body.notes-on .notes{display:block}
+  .notes .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:8px}
+  .notes p{font-size:14px;margin-bottom:9px;color:var(--text-secondary)}
+  .notes p:last-child{margin-bottom:0}
+  .notes em{color:var(--text-primary);font-style:normal;font-weight:620}
+
+  .kbd{display:inline-block;border:1px solid var(--rule-strong);border-bottom-width:2px;border-radius:5px;
+       padding:1px 6px;font-size:11.5px;background:var(--surface-2);color:var(--text-secondary)}
+
+  @media print{
+    #bar,#prog{display:none}
+    #deck{padding:0}
+    .slide{display:block !important;page-break-after:always;padding-top:26px;max-width:none}
+    body.notes-on .notes{display:block}
+  }
+  @media (max-width:820px){
+    .cols,.cols3{grid-template-columns:1fr}
+    h1{font-size:31px} h2{font-size:24px}
+    .slide{padding:0 20px 30px}
+  }
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <span class="t"><strong style="color:var(--text-primary)">T0 / D1</strong> &nbsp;·&nbsp; Formulation ratification &nbsp;·&nbsp; 8 Sep 2026</span>
+  <span class="sp"></span>
+  <button onclick="toggleNotes()" id="nbtn">Notes <span class="kbd">N</span></button>
+  <button onclick="toggleTheme()">Theme</button>
+  <button onclick="go(-1)">←</button>
+  <button onclick="go(1)">→</button>
+  <span id="count"></span>
+</div>
+<div id="prog"></div>
+
+<div id="deck">
+
+<!-- ============ 1 TITLE ============ -->
+<section class="slide">
+  <p class="eyebrow">Senior capstone · Team of 5 · Advisor: Prof. Tossaphol</p>
+  <h1>Profile-Guided Multi-Workflow<br>Resource Orchestration</h1>
+  <p class="lead">Allocation that keeps its own inputs honest — profiles are measured from
+  execution, drift is detected, and the system re-allocates.</p>
+
+  <div class="tiles" style="margin-top:26px">
+    <div class="tile"><div class="k">This session</div><div class="v">T0 / D1</div><div class="s">Ratify §1. Confirm-or-object, a default for every item</div></div>
+    <div class="tile"><div class="k">Milestone</div><div class="v">M1</div><div class="s">30 September 2026 — proposal + defense</div></div>
+    <div class="tile"><div class="k">Evidence base</div><div class="v">35</div><div class="s">findings, 647 tests, 15 conditions, 3 generators</div></div>
+  </div>
+
+  <p class="small muted"><span class="kbd">←</span> <span class="kbd">→</span> navigate &nbsp;·&nbsp;
+  <span class="kbd">N</span> speaker notes &nbsp;·&nbsp; <span class="kbd">Ctrl</span>+<span class="kbd">P</span> prints all slides with notes</p>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>Frame the hour.</em> This deck covers the whole project, but the only thing that has to
+    leave this room is a ratified §1 and five sign-offs. Everything before slide 25 is context so
+    that the confirm-or-object decisions are informed rather than blind.</p>
+    <p><em>Set the tone early:</em> we will volunteer our own errors. Four headline numbers were
+    retracted by our own audit. That is the strongest thing about this project, not the weakest.</p>
+  </div>
+</section>
+
+<!-- ============ 2 AGENDA ============ -->
+<section class="slide">
+  <p class="eyebrow">Orientation</p>
+  <h2>What this hour is for</h2>
+
+  <div class="cols">
+    <div>
+      <h3>The session (Parts 6–7)</h3>
+      <p>T0 is a <strong>confirm-or-object exercise, not a design debate.</strong> Every decision
+      below has a recommended default. If nobody objects, the default stands and we finish early.
+      That is the intended outcome.</p>
+      <p><strong>Nothing is blocking us.</strong> All three advisor questions came back on 3
+      September, including the one that could have invalidated the formulation.</p>
+    </div>
+    <div>
+      <h3>The context (Parts 1–5)</h3>
+      <table>
+        <tbody>
+          <tr><td><strong>1</strong></td><td>The problem, and why it is hard</td></tr>
+          <tr><td><strong>2</strong></td><td>The formulation — what you are ratifying</td></tr>
+          <tr><td><strong>3</strong></td><td>System design, requirements, principles</td></tr>
+          <tr><td><strong>4</strong></td><td>What the PoC built</td></tr>
+          <tr><td><strong>5</strong></td><td>What it found — the four questions</td></tr>
+          <tr><td><strong>6</strong></td><td>How we handle evidence, and what we cannot claim</td></tr>
+          <tr><td><strong>7</strong></td><td><strong>The five decisions + sign-off</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="flag good">
+    <p class="small"><strong>Exit criterion, from the plan:</strong> every member can state,
+    unprompted, what <code>x</code> and <code>n</code> mean and which constraint couples workflows.
+    If that is not true at the end, we have not finished.</p>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Say the exit criterion out loud at the start. It tells everyone what to listen for and it
+    makes the session self-checking.</p>
+    <p>If time runs short: do Part 2 (the formulation) and Part 7 (the decisions). Parts 3–6 can
+    move to the following week without putting 30 September at risk.</p>
+  </div>
+</section>
+
+<!-- ============ 3 PROBLEM ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 1 · The problem</p>
+  <h2>Two decisions, made together, before anything runs</h2>
+
+  <p class="lead">A batch of AI workflows arrives. Each task could be served by several model
+  profiles — <code>(model, hardware tier, batch config)</code> — differing in throughput, price,
+  reliability and latency.</p>
+
+  <div class="cols">
+    <div>
+      <table>
+        <thead><tr><th>Decision</th><th>Symbol</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Routing</strong></td><td><code>x[t][m]</code></td><td>which profile serves task <code>t</code> — exactly one</td></tr>
+          <tr><td><strong>Provisioning</strong></td><td><code>n[m]</code></td><td>how many instances of <code>m</code> we pay for</td></tr>
+        </tbody>
+      </table>
+      <p>Minimise the total bill. Do not exceed a GPU budget.</p>
+    </div>
+    <div class="card">
+      <h3>The circle</h3>
+      <p class="small">Routing determines <strong>load</strong>.<br>
+      Load determines <strong>instance counts</strong>.<br>
+      Instances consume the <strong>GPU budget</strong>.<br>
+      A binding budget constrains <strong>routing</strong>.</p>
+      <p class="small muted">Neither decision can be made first.</p>
+    </div>
+  </div>
+
+  <div class="flag">
+    <p><strong>Where the difficulty actually lives — <em>aggregate coupling</em>.</strong>
+    Capacity is bought in <strong>whole instances</strong>, not per task. So a task's marginal cost
+    depends on whether its profile already has headroom — which depends on decisions not yet made.
+    Two tasks that are each expensive to move can be cheap to move <em>together</em>.</p>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>Do not rush this slide.</em> If the room takes away one idea, it should be aggregate
+    coupling. The next slide proves it with three tasks.</p>
+    <p>Common misread to head off: people assume this is bin-packing or scheduling. It is neither —
+    there is no makespan and no time axis. It is facility location.</p>
+  </div>
+</section>
+
+<!-- ============ 4 FIXTURE ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 1 · The proof, by hand</p>
+  <h2>Three tasks, two profiles — and greedy loses</h2>
+
+  <div class="cols">
+    <div>
+      <pre><code>Profiles
+  m1: thr=10  gpu=1  price=100  rel=0.99
+  m2: thr=25  gpu=2  price=180  rel=0.95
+
+Tasks
+  t1: load=8  needs rel ≥ 0.90  → {m1, m2}
+  t2: load=6  needs rel ≥ 0.90  → {m1, m2}
+  t3: load=9  needs rel ≥ 0.98  → {m1}  only
+
+Budget B = 4</code></pre>
+      <p class="small muted">Small enough to solve by exhaustion. Checked by tests, every run:
+      <code>poc/instances/fixtures/adversarial_3t2p.py</code></p>
+    </div>
+    <div>
+      <table>
+        <thead><tr><th>Routing</th><th class="num">n[m1]</th><th class="num">n[m2]</th><th class="num">GPUs</th><th class="num">Cost</th></tr></thead>
+        <tbody>
+          <tr><td>all on m1</td><td class="num">3</td><td class="num">0</td><td class="num">3</td><td class="num"><strong>300</strong></td></tr>
+          <tr><td>t1→m2</td><td class="num">2</td><td class="num">1</td><td class="num">4</td><td class="num">380</td></tr>
+          <tr><td>t2→m2</td><td class="num">2</td><td class="num">1</td><td class="num">4</td><td class="num">380</td></tr>
+          <tr style="background:var(--surface-2)"><td><strong>t1,t2→m2</strong></td><td class="num">1</td><td class="num">1</td><td class="num">3</td><td class="num"><strong style="color:var(--good)">280 ← optimum</strong></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Greedy's trace — every step locally correct</h3>
+      <pre><code>t1: m1 = 100, m2 = 180        → m1   (load 8)
+t2: m1 headroom 2 &lt; 6, +1 = 100 → m1   (load 14)
+t3: m1 headroom 6 &lt; 9, +1 = 100 → m1   (load 23)
+                                  = 300</code></pre>
+    </div>
+  </div>
+
+  <div class="flag bad">
+    <p><strong>And it cannot be rescued cheaply.</strong> Verified by exhaustion: all <strong>six
+    orderings</strong> return 300, so multi-start does not help. <strong>Single-move relocate</strong>
+    does not help either — moving <code>t1</code> alone costs +180 to save 100. The improving move is
+    <strong>both tasks together</strong>, which a one-at-a-time neighbourhood cannot find.</p>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>This is the best teaching slide in the deck.</em> Walk the greedy trace line by line and
+    let the room notice that every individual decision is correct.</p>
+    <p>Then land the point: this one fixture drove a real algorithmic decision. It is why we built a
+    <strong>subset</strong> move rather than a relocate move — and the subset move recovers 280.</p>
+    <p>If asked "isn't this just a contrived example?" — yes, deliberately. It is the smallest case
+    that isolates the mechanism, and the mechanism recurs at scale (T2).</p>
+  </div>
+</section>
+
+<!-- ============ 5a VOCABULARY ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 2 &middot; What you are ratifying &middot; 1 of 6</p>
+  <h2>The vocabulary &mdash; sets, parameters, variables</h2>
+
+  <div class="cols">
+    <div>
+      <h3>Sets</h3>
+      <pre><code>T           tasks, across all workflows in the batch
+M           model profiles &mdash; an instantiable
+            (model, hardware tier, config) triple
+C(t) &sube; M    profiles eligible for task t,
+            after floor filtering</code></pre>
+      <p class="small"><strong>A profile is the unit that gets provisioned. A candidate is a
+      profile eligible for a task.</strong> Same objects, viewed from different sides &mdash; worth
+      saying once so nobody thinks they are two registries.</p>
+
+      <h3>Decision variables</h3>
+      <pre><code>x[t][m] &isin; {0,1}   task t &rarr; profile m &isin; C(t)   level 1
+n[m]    &isin; Z&#8314;      instances provisioned       level 2</code></pre>
+      <p class="small muted">"Two-level" refers to these two variable families, not to a
+      hierarchy of solvers.</p>
+    </div>
+    <div>
+      <h3>Parameters</h3>
+      <pre><code>load(t)    throughput demand of task t
+thr(m)     throughput of ONE instance of m
+gpu(m)     GPUs consumed by one instance
+price(m)   cost of one instance over the horizon
+B          total GPU budget
+rel(m)     reliability of profile m        [0,1]
+lat(t,m)   latency of task t on profile m
+R_min(t)   reliability floor for task t
+L_max(t)   latency ceiling for task t</code></pre>
+
+      <div class="flag">
+        <p><strong><code>R_min(t)</code> is not an arbitrary input.</strong> It is
+        <strong>the reliability the baseline would deliver for <code>t</code></strong> &mdash; advisor
+        guidance, 3 Sep. The goal is not to maximise reliability; it is to stay <em>as good as not
+        using this system.</em></p>
+        <p class="small">Set it arbitrarily low and the optimiser will <em>legally</em> trade
+        reliability for cost: given two profiles both clearing a 0.90 floor, it correctly takes
+        <strong>0.910 over 0.999</strong> and saves 200. Anchoring the floor to the baseline enforces
+        the requirement <strong>with no change to the objective or to (C1)&ndash;(C3).</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>The R_min anchoring is the subtle one and it is worth the time.</em> It is the difference
+    between a floor that means something and a floor that can be satisfied by a system quietly getting
+    worse. It also answers "why isn't reliability in the objective?" before that question is asked.</p>
+    <p>Note the elegance to claim here: the requirement is enforced entirely by <em>how the floor is
+    set</em>, not by adding machinery. No new term, no new constraint.</p>
+  </div>
+</section>
+
+<!-- ============ 5b OBJECTIVE ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 2 &middot; What you are ratifying &middot; 2 of 6</p>
+  <h2>The objective &mdash; and the term we closed</h2>
+
+  <pre><code>minimize    &Sigma;_{m &isin; M}  n[m] &middot; price(m)</code></pre>
+
+  <p class="lead">You pay for <strong>instances you provision</strong>, not for calls you make.
+  That is the whole objective.</p>
+
+  <div class="cols">
+    <div>
+      <h3>The term that was proposed &mdash; and closed</h3>
+      <pre><code>          + &Sigma;_t &Sigma;_m  x[t][m] &middot; varcost(t, m)</code></pre>
+      <p class="small">A variable per-invocation term, for the case where executor pricing is
+      usage-based rather than provisioning-based.</p>
+      <p><strong style="color:var(--bad)">CLOSED, 2 September 2026: no.</strong> Not implemented,
+      and <code>ProfileSpec</code> carries no <code>varcost</code> field.</p>
+    </div>
+    <div>
+      <h3>Why it matters that this stays closed</h3>
+      <ul>
+        <li>Reopening it <strong>changes the objective signature everywhere</strong> &mdash; every track,
+        every bound, every recorded number</li>
+        <li>It does <strong>not</strong> change the problem class, so it buys no new literature</li>
+        <li>It would break the clean statement that cost is a function of <code>n</code> alone &mdash;
+        which is what makes the two-level structure legible</li>
+      </ul>
+      <div class="flag">
+        <p class="small"><strong>If you object to this, say so now.</strong> This is one of the two
+        decisions on the sheet that is genuinely expensive to reverse later. The other is (C2).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>O1 is closed but it is <em>a default that was adopted</em>, not a law. If the team knows the
+    real executor will bill per token, this is the moment to say it &mdash; after T0 it costs a rewrite of
+    every result.</p>
+  </div>
+</section>
+
+<!-- ============ 5c CONSTRAINTS ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 2 &middot; What you are ratifying &middot; 3 of 6</p>
+  <h2>The three constraints &mdash; and the two that are <em>not</em> constraints</h2>
+
+  <pre><code>(C1)  &Sigma;_{m &isin; C(t)} x[t][m] = 1                              &forall; t &isin; T
+      every task is assigned exactly one profile
+
+(C2)  &Sigma;_{t : m &isin; C(t)} x[t][m] &middot; load(t)  &le;  n[m] &middot; thr(m)   &forall; m &isin; M
+      provisioned throughput covers routed load
+
+(C3)  &Sigma;_{m &isin; M} n[m] &middot; gpu(m)  &le;  B
+      total GPUs within budget</code></pre>
+
+  <div class="cols">
+    <div>
+      <h3>Floors are applied by construction</h3>
+      <pre><code>C(t) = { m &isin; M : rel(m) &ge; R_min(t)
+                 and lat(t,m) &le; L_max(t) }</code></pre>
+      <p>Three reasons this is not a constraint in the program:</p>
+      <ul>
+        <li>It <strong>keeps floors out of the program</strong> entirely</li>
+        <li>It <strong>preserves the LP relaxation's validity</strong> &mdash; a filtered pool is still a
+        clean 0/1 assignment problem</li>
+        <li>It matches <strong>P3, feasibility first, cost second</strong> &mdash; a floor is never
+        weighed against money</li>
+      </ul>
+    </div>
+    <div>
+      <h3>No linking constraint is needed</h3>
+      <p>A reader expecting facility location will look for <code>x[t][m] &le; y[m]</code> and not find
+      it. It is <strong>redundant here</strong>:</p>
+      <pre><code>if x[t][m] = 1 and load(t) &gt; 0
+   then (C2) already forces n[m] &ge; 1</code></pre>
+      <p class="small">The capacity constraint does the opening constraint's job, because capacity
+      is bought in modular units rather than switched on. Adding the link would be harmless and
+      useless.</p>
+      <div class="flag good">
+        <p class="small"><strong>This is a good question to be asked.</strong> It shows the
+        formulation was reasoned about rather than copied.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>If anyone is going to object to &sect;1, it will be here. Ask explicitly, constraint by constraint.</p>
+    <p>The no-linking-constraint point is worth volunteering &mdash; an examiner who knows facility location
+    will notice its absence, and it is much better to have explained it than to be asked.</p>
+  </div>
+</section>
+
+<!-- ============ 5d COUPLING ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 2 &middot; What you are ratifying &middot; 4 of 6</p>
+  <h2>Where the coupling lives &mdash; and why (C2) is the whole difficulty</h2>
+
+  <table>
+    <thead><tr><th style="width:12%">Constraint</th><th style="width:34%">Couples</th><th>Consequence</th></tr></thead>
+    <tbody>
+      <tr><td><strong>(C1)</strong></td><td>Profiles, through each task</td>
+          <td>A task's choice is exclusive &mdash; taking one profile forecloses the others</td></tr>
+      <tr style="background:var(--surface-2)"><td><strong>(C2)</strong></td>
+          <td><strong>Tasks to instances, and tasks to each other</strong> across workflows sharing a profile</td>
+          <td><strong>This is the multi-workflow interaction.</strong> Two tasks in different workflows contend <em>only</em> if they route to the same profile</td></tr>
+      <tr><td><strong>(C3)</strong></td><td>All profiles, through one budget</td><td>Global scarcity</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cols">
+    <div class="card">
+      <h3>The integrality gap lives in (C2)</h3>
+      <p><code>n[m]</code> must cover a <strong>ceiling</strong> of aggregate load over throughput.
+      The LP relaxation returns <em>fractional</em> instance counts; rounding up costs real GPUs.</p>
+      <p class="small"><strong>This is why the LP bound is not tight, and why an integer-aware method
+      can beat it.</strong> It is the entire justification for Track B existing.</p>
+    </div>
+    <div class="card">
+      <h3>Aggregate coupling lives in (C2) too</h3>
+      <p>A task's marginal cost depends on whether its chosen profile <strong>already has
+      headroom</strong>. Routing task 1 to profile X may cost a whole instance &mdash; or nothing &mdash;
+      depending on assignments <em>not yet made</em>.</p>
+      <p class="small"><strong>Track A's central difficulty</strong>, and the thing the three-task
+      fixture demonstrates in four lines.</p>
+    </div>
+  </div>
+
+  <div class="flag good">
+    <p><strong>This slide answers the exit criterion.</strong> "Which constraint couples workflows?"
+    &mdash; <strong>(C2)</strong>. Everything hard about this problem, and both reasons the heuristics are
+    interesting, are in one constraint.</p>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>If the room only remembers one slide from Part 2, make it this one.</em> Two different
+    difficulties &mdash; the integrality gap and aggregate coupling &mdash; both live in (C2), and they motivate
+    two different tracks. That is not a coincidence worth glossing over.</p>
+    <p>Tie it back: the fixture on the earlier slide <em>is</em> aggregate coupling, and the reason
+    the LP bound is loose <em>is</em> the integrality gap. One constraint, both stories.</p>
+  </div>
+</section>
+
+<!-- ============ 5e PROBLEM CLASS ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 2 &middot; What you are ratifying &middot; 5 of 6</p>
+  <h2>Problem class &mdash; and why naming it correctly earned us three things</h2>
+
+  <div class="cols">
+    <div>
+      <p class="lead">This is a <strong>modular capacitated facility location problem with a budget
+      constraint.</strong></p>
+      <table>
+        <thead><tr><th>Facility location term</th><th>Here</th></tr></thead>
+        <tbody>
+          <tr><td>Facility site</td><td>Model profile <code>m</code></td></tr>
+          <tr><td>Opening multiple <strong>modular units</strong> at a site</td><td><code>n[m]</code> instances</td></tr>
+          <tr><td>Customer</td><td>Task <code>t</code></td></tr>
+          <tr><td>Assignment</td><td><code>x[t][m]</code></td></tr>
+          <tr><td>Facility capacity</td><td><code>n[m] &middot; thr(m)</code></td></tr>
+          <tr><td>Global side constraint</td><td>GPU budget (C3)</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted">"Modular" is the word doing the work &mdash; capacity is opened in whole
+      units, not switched on once.</p>
+    </div>
+    <div>
+      <h3>Why the identification matters</h3>
+      <table>
+        <tbody>
+          <tr><td><strong>1</strong></td><td><strong>It justifies Lagrangian relaxation properly.</strong>
+          Relaxing the assignment constraints is <em>the classical method</em> for capacitated facility
+          location. Track B is not an arbitrary pick &mdash; it is the textbook method for this class</td></tr>
+          <tr><td><strong>2</strong></td><td><strong>It predicted the decomposition.</strong> Relaxing
+          (C1) yields <strong>one subproblem per profile</strong>. That is the standard result &mdash; and it
+          <em>contradicted v1's claim</em> of per-workflow decomposition. The literature caught our
+          error before any code did</td></tr>
+          <tr><td><strong>3</strong></td><td><strong>It gives us a literature to cite</strong> beyond
+          the two LLM-serving papers, which is what makes Chapter 2 defensible</td></tr>
+        </tbody>
+      </table>
+      <div class="flag good">
+        <p class="small">Point 2 is the one to tell. <strong>Naming the problem class correctly
+        found a design error for free</strong> &mdash; v1 predicted the wrong decomposition, and the
+        textbook said so before we wrote a line.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>This is where "our problem is textbook" turns from a concession into an asset. Knowing the class
+    told us which relaxation to build, predicted its structure, and corrected a wrong claim in v1.</p>
+    <p>Expect: "so what is novel?" &mdash; the answer is the loop, and it is the next slide.</p>
+  </div>
+</section>
+
+<!-- ============ 5f NOT MODELLED ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 2 &middot; What you are ratifying &middot; 6 of 6</p>
+  <h2>What is deliberately <em>not</em> modelled</h2>
+
+  <p class="lead">Recorded so the divergence from Murakkab is <strong>explicit rather than
+  accidental.</strong> Every line here is a decision, not an omission.</p>
+
+  <table>
+    <thead><tr><th style="width:30%">Not modelled</th><th>Consequence, and why</th></tr></thead>
+    <tbody>
+      <tr><td><strong>No time dimension</strong></td>
+          <td>Steady-state provisioning over one horizon. No arrival dynamics, no queueing, no
+          autoscaling. <span class="muted">This is why there is no makespan term &mdash; and why HEFT was dropped</span></td></tr>
+      <tr><td><strong>No precedence</strong></td>
+          <td>DAG edges determine data flow at <em>execution</em> time but do not enter the
+          optimisation &mdash; <strong>exactly as in both source papers</strong></td></tr>
+      <tr><td><strong>Parallelism config is not a decision</strong></td>
+          <td>TP/PP degree is <em>baked into a profile</em> rather than chosen.
+          <strong>Murakkab and Cheng &amp; Nguyen both decide it; we do not.</strong> This is our
+          largest deliberate divergence</td></tr>
+      <tr><td><strong>No accuracy maximisation</strong></td>
+          <td>Reliability is a floor only &mdash; and O10 confirmed that on 3 Sep</td></tr>
+      <tr><td><strong>No multi-tenancy pricing or SLO tiers</strong></td><td>Single-tenant, one horizon</td></tr>
+    </tbody>
+  </table>
+
+  <div class="flag">
+    <p><strong>The one to volunteer: parallelism configuration.</strong> Both source papers treat
+    TP/PP degree as a decision variable and we do not &mdash; we push it into the profile definition. That
+    makes our problem smaller than theirs, and an examiner who knows those papers will spot it. Say it
+    first, and say why: profiles are <em>measured</em> artefacts in our design, so their internal
+    configuration is an input, not a choice.</p>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>This slide is insurance.</em> Each line is somewhere an examiner could say "you have not
+    handled X". Having a written, reasoned list turns each of those from a gap into a scope decision.</p>
+    <p>The precedence line is the most common misunderstanding &mdash; people assume a DAG implies
+    scheduling. It does not, here, and both source papers agree.</p>
+  </div>
+</section>
+
+<!-- ============ 6 POSITIONING ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 2 · Positioning</p>
+  <h2>What is borrowed, and what is ours</h2>
+
+  <div class="cols">
+    <div class="card">
+      <h3>Borrowed — and we say so first</h3>
+      <p>The allocation problem is known: <strong>modular capacitated facility location with a
+      budget constraint.</strong> Profiles are facilities, <code>n[m]</code> is units opened, tasks
+      are customers, (C2) is facility capacity.</p>
+      <p class="small muted">We claim no novelty here and present it as adopted. §1.8.</p>
+    </div>
+    <div class="card" style="border-color:var(--accent)">
+      <h3>Ours — the closed loop</h3>
+      <p><strong>Measure profiles from execution, detect drift, re-optimise.</strong> Neither
+      Murakkab nor Cheng &amp; Nguyen does this — both take profiles as static inputs.</p>
+      <p class="small"><strong style="color:var(--good)">Advisor confirmed 3 Sep (O12): sufficient
+      as the M1 contribution.</strong> Novelty is claimed in the loop, <em>not</em> the optimisation.</p>
+    </div>
+  </div>
+
+  <h3>Where each idea came from</h3>
+  <table>
+    <thead><tr><th style="width:34%">Source</th><th>What we took</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Chaudhry et al. (2026), Murakkab</strong></td><td>The capacity model, DAG representation, MILP baseline. <strong>Our §1 <em>is</em> their model</strong> — which is why our MILP condition <em>is</em> the Murakkab comparison</td></tr>
+      <tr><td><strong>Cheng &amp; Nguyen (2026)</strong></td><td>Feasibility-first-then-cost, marginal activation ranking, multi-start. Track A's ancestry</td></tr>
+      <tr><td><strong>de la Torre &amp; Halappanavar (2023)</strong></td><td>Lagrangian relaxation with subgradient updates — Track B's method</td></tr>
+      <tr><td><strong>Hua et al. (2026), AgentOpt</strong></td><td>Transport-layer interception — how profiling attaches to real execution</td></tr>
+      <tr><td class="muted"><s>Topcuoglu et al. (2002)</s></td><td class="muted"><strong>Dropped.</strong> HEFT / upward-rank order tasks by a quantity absent from our objective — we have no makespan term. An early error, corrected</td></tr>
+    </tbody>
+  </table>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>Volunteer the borrowing before anyone finds it.</em> "Our problem is textbook and we say
+    so" is a much stronger position than being caught claiming novelty in a solved problem.</p>
+    <p>The HEFT row is worth keeping visible — it shows we removed something once we understood it
+    did not belong, rather than leaving it in because it looked sophisticated.</p>
+  </div>
+</section>
+
+<!-- ============ 7a COMPONENTS ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 3 &middot; System design &middot; 1 of 6</p>
+  <h2>The components &mdash; and the one that replaced a mistake</h2>
+
+  <div class="cols">
+    <div>
+<pre><code>System
+&#9500;&#9472; Workflow Ingestion
+&#9500;&#9472; Executor Registry
+&#9500;&#9472; Eligibility Resolver
+&#9500;&#9472; Multi-Workflow Optimizer
+&#9474;    &#9500;&#9472; Track A &mdash; Greedy Construction
+&#9474;    &#9500;&#9472; Track B &mdash; Lagrangian Relaxation
+&#9474;    &#9500;&#9472; Track C &mdash; LP Relaxation + Rounding
+&#9474;    &#9492;&#9472; Shared Decision Rule
+&#9500;&#9472; <strong>Provisioning State</strong>   &#8592; replaces v1's Resource Ledger
+&#9500;&#9472; Assignment Registry
+&#9500;&#9472; Execution Engine
+&#9500;&#9472; Profiling Subsystem
+&#9474;    &#9500;&#9472; Measurement Interceptor
+&#9474;    &#9500;&#9472; Profile Store
+&#9474;    &#9492;&#9472; Drift Detector
+&#9492;&#9472; Evaluation Harness</code></pre>
+    </div>
+    <div>
+      <table>
+        <thead><tr><th style="width:44%">Component</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Workflow Ingestion</td><td>Parse, validate, <strong>freeze</strong> the batch</td></tr>
+          <tr><td>Executor Registry</td><td>Curated catalogue of profiles and declared task types</td></tr>
+          <tr><td>Eligibility Resolver</td><td>Build <code>C(t)</code> by exact type match + floor filtering</td></tr>
+          <tr><td>Multi-Workflow Optimizer</td><td>Produce <code>x</code> and <code>n</code></td></tr>
+          <tr style="background:var(--surface-2)"><td><strong>Provisioning State</strong></td><td>Track instances, per-profile load and GPU budget <strong>during</strong> a run</td></tr>
+          <tr><td>Assignment Registry</td><td>Persist <strong>versioned</strong> assignments</td></tr>
+          <tr><td>Execution Engine</td><td>Run a stored assignment</td></tr>
+          <tr><td>Profiling Subsystem</td><td>Measure, update profiles, detect drift</td></tr>
+          <tr><td>Evaluation Harness</td><td>Run all conditions under <strong>matched</strong> inputs</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted">Three of these are stubbed or simulated in the PoC &mdash; the Registry,
+      the Execution Engine and real profiling. Marked on the requirements slide.</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Two words to point at. <strong>"Freeze"</strong> in Ingestion &mdash; structure is immutable after
+    ingestion (P8), so drift can only re-enter through the Optimizer, never by rewriting the batch.
+    <strong>"Matched"</strong> in the Harness &mdash; every condition gets the identical instance object,
+    which is what makes cross-track comparison legitimate.</p>
+  </div>
+</section>
+
+<!-- ============ 7b PRINCIPLES ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 3 &middot; System design &middot; 2 of 6</p>
+  <h2>Ten principles &mdash; each with a consequence you can see in the code</h2>
+
+  <table>
+    <thead><tr><th style="width:5%"></th><th style="width:36%">Principle</th><th>Consequence</th></tr></thead>
+    <tbody>
+      <tr><td><strong>P1</strong></td><td>Offline batch, not streaming</td><td>No admission control, no mid-run rebalancing</td></tr>
+      <tr><td><strong>P2</strong></td><td>Eligibility separate from selection</td><td>The Resolver returns <strong>pools, never winners</strong></td></tr>
+      <tr style="background:var(--surface-2)"><td><strong>P3</strong></td><td><strong>Feasibility first, cost second</strong></td><td>Floors filter <code>C(t)</code>; they are <strong>never weighted against cost</strong></td></tr>
+      <tr style="background:var(--surface-2)"><td><strong>P4</strong></td><td><strong>One decision rule, three coordination strategies</strong></td><td>All tracks call the same inner rule &mdash; see the last slide of this part</td></tr>
+      <tr><td><strong>P5</strong></td><td>Tracks are swappable</td><td>One interface; <strong>none privileged</strong></td></tr>
+      <tr><td><strong>P6</strong></td><td>Profiles are measured, not declared</td><td>No hand-tuned tables anywhere</td></tr>
+      <tr><td><strong>P7</strong></td><td>Re-optimisation is event-driven</td><td>Drift triggers it; <strong>no fixed clock</strong></td></tr>
+      <tr><td><strong>P8</strong></td><td>Structure immutable after ingestion</td><td>Drift re-enters the Optimizer only</td></tr>
+      <tr style="background:var(--surface-2)"><td><strong>P9</strong></td><td><strong>Complete or nothing</strong></td><td>A partial assignment is <strong>never</strong> valid output &mdash; tracks return <code>feasible=False</code>, they do not return half an answer</td></tr>
+      <tr style="background:var(--surface-2)"><td><strong>P10</strong></td><td><strong>Reproducible given a fixed seed</strong></td><td>Randomised restarts are <strong>seeded, not banned</strong>. Every run in this deck reproduces exactly</td></tr>
+    </tbody>
+  </table>
+
+  <div class="flag good">
+    <p><strong>The four highlighted rows are the ones that shaped the code most.</strong> P3 is why
+    floors are not constraints. P4 is why one bug fix improves three tracks. P9 is why the harness can
+    record failures as data. P10 is why every number on these slides is a command you can re-run.</p>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Do not read all ten. Point at the four highlighted and give the one-line consequence for each.</p>
+    <p>P9 is worth a beat: it is why an infeasible result carries the <em>blocking task and violated
+    constraint</em> rather than raising an exception. Failures are data.</p>
+  </div>
+</section>
+
+<!-- ============ 7c JOBS ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 3 &middot; System design &middot; 3 of 6</p>
+  <h2>Ten jobs, and the cycle they form</h2>
+
+  <div class="cols">
+    <div>
+      <table>
+        <thead><tr><th style="width:8%">ID</th><th style="width:32%">Job</th><th>Completes when</th></tr></thead>
+        <tbody>
+          <tr><td><strong>J1</strong></td><td>Ingest batch</td><td>All workflows parsed, validated, frozen</td></tr>
+          <tr><td><strong>J2</strong></td><td>Resolve eligibility</td><td>Every task has <strong>non-empty</strong> <code>C(t)</code></td></tr>
+          <tr style="background:var(--surface-2)"><td><strong>J3</strong></td><td><strong>Produce allocation</strong></td><td><code>x</code> and <code>n</code> complete <strong>and feasible</strong></td></tr>
+          <tr><td><strong>J4</strong></td><td>Persist assignment</td><td>Stored and active</td></tr>
+          <tr><td><strong>J5</strong></td><td>Execute</td><td>All tasks terminated</td></tr>
+          <tr><td><strong>J6</strong></td><td>Record outcomes</td><td>Observation emitted</td></tr>
+          <tr><td><strong>J7</strong></td><td>Update profile</td><td>Entry updated</td></tr>
+          <tr><td><strong>J8</strong></td><td>Detect drift</td><td>Score computed and compared</td></tr>
+          <tr><td><strong>J9</strong></td><td>Trigger re-optimisation</td><td><strong>J3 re-invoked</strong></td></tr>
+          <tr><td><strong>J10</strong></td><td>Run evaluation</td><td>All conditions recorded</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>The dependency graph</h3>
+<pre><code>J1 &#9472;&#9472;&#9658; J2 &#9472;&#9472;&#9658; J3 &#9472;&#9472;&#9658; J4
+             &#9650;        &#9474;
+             &#9474;        &#9660;
+            J9      J5
+             &#9650;        &#9474;
+             &#9474;        &#9660;
+            J8 &#9668;&#9472; J7 &#9668;&#9472; J6
+
+J10 &#9472;&#9472;&#9658; drives J3 under fixed conditions</code></pre>
+
+      <div class="flag">
+        <p><strong>J3 sits inside a cycle, and that is the whole design pressure.</strong> It is
+        entered from J2 once, and then from <strong>J9 every time drift is detected</strong>. An
+        allocator that is merely fast on average is not good enough for a position like that &mdash; it
+        has to be <em>bounded</em>. That single structural fact is why Track C's predictability beat
+        Track B's quality in the end.</p>
+      </div>
+
+      <p class="small muted">J10 is off to the side deliberately: the harness drives J3 directly under
+      fixed conditions, bypassing the loop, so evaluation never depends on execution.</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Trace the cycle with a finger: J3 &rarr; J4 &rarr; J5 &rarr; J6 &rarr; J7 &rarr; J8 &rarr; J9 &rarr; back to J3. Then say the
+    consequence out loud &mdash; everything in Part 5 about bounded runtime is a response to J3's position
+    in this diagram, not a general preference for fast algorithms.</p>
+  </div>
+</section>
+
+<!-- ============ 7d J3 ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 3 &middot; System design &middot; 4 of 6</p>
+  <h2>J3 in six steps &mdash; and the one that changed</h2>
+
+  <div class="cols">
+    <div>
+      <h3>What one allocation run does</h3>
+      <table>
+        <tbody>
+          <tr><td><strong>1</strong></td><td>Take an <strong>immutable profile snapshot</strong></td></tr>
+          <tr><td><strong>2</strong></td><td>Initialise Provisioning State &mdash; zero instances, zero load, full budget</td></tr>
+          <tr><td><strong>3</strong></td><td>Select strategy (A, B or C)</td></tr>
+          <tr><td><strong>4</strong></td><td>Execute the track</td></tr>
+          <tr style="background:var(--surface-2)"><td><strong>5</strong></td><td><strong>Verify:</strong> every task assigned; (C2) holds for every profile; (C3) holds</td></tr>
+          <tr><td><strong>6</strong></td><td>Emit <code>AllocationResult</code> containing <strong>both</strong> <code>x</code> and <code>n</code></td></tr>
+        </tbody>
+      </table>
+      <p class="small">Step 1 matters more than it looks: the snapshot is immutable, so a profile
+      update landing mid-run cannot change the problem underneath the solver.</p>
+      <p class="small"><strong>Step 5 is the invariant check</strong> &mdash; I1&ndash;I5, and it runs on every
+      result from every track before it is allowed to leave.</p>
+    </div>
+    <div>
+      <h3 style="color:var(--warn)">The change: J9 no longer scopes</h3>
+      <p>J9 previously read <em>"re-optimise for affected workflows only"</em>, with a note doubting
+      whether that is even well-defined under (C2).</p>
+      <p><strong>It is well-defined. It is also vacuous.</strong></p>
+      <ul>
+        <li>Drift is detected on a <strong>profile</strong></li>
+        <li>So the affected workflows are those routed to it</li>
+        <li>But a shared profile is used by <strong>84&ndash;100% of workflows</strong>, even at twelve</li>
+      </ul>
+      <p>Scoping correctly does <strong>the same work as a global run</strong>. Scoping <em>narrower</em>
+      costs a mean <strong>22%</strong> and up to <strong>51%</strong>.</p>
+      <div class="flag good">
+        <p class="small"><strong>Resolved &mdash; O9. J9 re-invokes J3 over the whole batch. No scoping.</strong>
+        This is one of the project's most useful <em>negative</em> results: it deleted a planned
+        component rather than adding one.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>Tell this as a design win, not a retreat.</em> We planned scoped re-optimisation, measured
+    whether it was meaningful, found it was not, and removed it. The cheapest component is the one you
+    do not build.</p>
+    <p>Decision 5 on the sign-off sheet is exactly this. The default is "drop scoping".</p>
+  </div>
+</section>
+
+<!-- ============ 7e PROVISIONING STATE ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 3 &middot; System design &middot; 5 of 6</p>
+  <h2>Provisioning State &mdash; the correction at the heart of v2</h2>
+
+  <div class="flag bad">
+    <p><strong>v1 modelled a slot pool, decremented per task. That was wrong.</strong> Under
+    (C2)&ndash;(C3) a task consumes <em>no resource directly</em> &mdash; it adds <strong>load</strong>, which may or
+    may not force a new instance. Getting this backwards makes every cost number wrong, and it is the
+    single largest correction between v1 and v2.</p>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>Interface</h3>
+<pre><code>ProvisioningState:
+    instances(m)      -&gt; int     # n[m]
+    load(m)           -&gt; float   # routed load on m
+    gpusUsed()        -&gt; int     # &Sigma; n[m]&middot;gpu(m)
+    headroom(m)       -&gt; float   # n[m]&middot;thr(m) &minus; load(m)
+
+    costToAdmit(t, m) -&gt; AdmitCost | Infeasible
+    admit(t, m)       -&gt; void
+    release(t, m)     -&gt; void
+    snapshot()        -&gt; StateSnapshot
+    restore(snap)     -&gt; void</code></pre>
+
+<pre><code>AdmitCost {
+    extraInstances  # ceil(shortfall / thr(m)),
+                    # ZERO if headroom suffices
+    extraGpus       # extraInstances &middot; gpu(m)
+    extraCost       # extraInstances &middot; price(m)
+}</code></pre>
+    </div>
+    <div>
+      <h3><code>costToAdmit</code> is the most important operation in the system</h3>
+      <p>It answers <em>"what does routing this task here cost <strong>right now</strong>"</em> &mdash; and
+      <strong>its answer changes as other tasks are admitted.</strong></p>
+      <p><strong>That state-dependence <em>is</em> the aggregate-coupling problem</strong>, made
+      explicit in an interface rather than hidden inside three separate algorithms.</p>
+
+      <h3>Two details that carry weight</h3>
+      <ul>
+        <li><code>costToAdmit</code> returns <strong><code>Infeasible</code></strong> when
+        <code>extraGpus</code> would exceed remaining budget &mdash; so (C3) is enforced at the point of
+        decision, not checked afterwards</li>
+        <li><code>snapshot</code>/<code>restore</code> exist for <strong>Track A's multi-start</strong>
+        and <strong>Track C's rounding repair</strong> &mdash; both need to try an assignment and take it back</li>
+      </ul>
+      <div class="flag good">
+        <p class="small"><strong>One component, one bug surface.</strong> Because all three tracks go
+        through this object, aggregate coupling is implemented <em>once</em>. If it is right, it is
+        right everywhere.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>This is the design slide to be proud of.</em> The hard part of the problem was isolated into
+    one method with a name, rather than being spread across three algorithms where each would have got
+    it subtly differently.</p>
+    <p>The <code>extraInstances = 0</code> case is the fixture in miniature &mdash; it is exactly what greedy
+    fails to look ahead to.</p>
+  </div>
+</section>
+
+<!-- ============ 7f DECISION RULE ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 3 &middot; System design &middot; 6 of 6</p>
+  <h2>One decision rule, three strategies &mdash; the seam that makes P4 real</h2>
+
+  <div class="cols">
+    <div>
+<pre><code>function selectProfile(task, pool, state, costAdjust):
+    best      = None
+    bestValue = +inf
+
+    for m in pool:          # pool is C(t),
+                            # already floor-filtered
+        admit = state.costToAdmit(task, m)
+        if admit is Infeasible:   # would exceed budget
+            continue
+
+        value = costAdjust(m, admit)
+        if value &lt; bestValue:
+            best      = m
+            bestValue = value
+
+    if best is None:
+        return Infeasible(
+            reason="no profile admissible within budget",
+            blockingTask=task.id, constraint="C3")
+    return best</code></pre>
+      <p class="small muted">Complexity: <code>O(|C(t)|)</code> per task.</p>
+    </div>
+    <div>
+      <h3><code>costAdjust</code> is the entire difference between the tracks</h3>
+      <table>
+        <thead><tr><th style="width:26%">Track</th><th><code>costAdjust(m, admit)</code></th></tr></thead>
+        <tbody>
+          <tr><td><strong>A</strong> greedy</td><td><code>admit.extraCost</code><br><span class="small muted">marginal provisioning cost only</span></td></tr>
+          <tr><td><strong>B</strong> Lagrangian</td><td><code>admit.extraCost + &lambda;[task]</code><br><span class="small muted">plus the relaxed assignment multiplier</span></td></tr>
+          <tr><td><strong>C</strong> repair</td><td><code>admit.extraCost</code></td></tr>
+        </tbody>
+      </table>
+
+      <p>Three coordination strategies that look completely different at the top &mdash; construct greedily,
+      dualise and iterate, relax and round &mdash; <strong>meet at one function and differ by one term.</strong></p>
+
+      <div class="flag good">
+        <p><strong>Why this is worth showing at T0.</strong> It is the concrete answer to "are your
+        tracks really comparable?" They share the eligibility filter, the state object, the
+        feasibility test and the selection loop. <strong>What differs is exactly one expression</strong>
+        &mdash; so a difference in results is a difference in coordination strategy, not in plumbing.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>This slide pre-empts the strongest methodological objection to any track comparison: that the
+    tracks differ in a hundred small ways and the comparison is meaningless. Here it is one line.</p>
+    <p>Note the <code>Infeasible</code> return carries the <strong>blocking task and the violated
+    constraint</strong>. That is P9 in practice &mdash; a failure is a structured object, not an exception.</p>
+  </div>
+</section>
+
+<!-- ============ 8 REQUIREMENTS ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 3 · Scope, honestly</p>
+  <h2>Nine requirements — three have no implementation</h2>
+
+  <table>
+    <thead><tr><th style="width:8%"></th><th style="width:40%">Requirement</th><th>State</th></tr></thead>
+    <tbody>
+      <tr><td><strong>R1</strong></td><td>Per-task allocation</td><td><strong style="color:var(--good)">Built</strong> — J3, the Optimizer</td></tr>
+      <tr><td><strong>R2</strong></td><td>Multiple concurrent workflows</td><td><strong style="color:var(--good)">Built</strong> — this is what (C2) couples</td></tr>
+      <tr><td><strong>R3</strong></td><td>Non-exact alternatives to the MILP</td><td><strong style="color:var(--good)">Built</strong> — Tracks A, B, C</td></tr>
+      <tr><td><strong>R4</strong></td><td>Profile-guided, self-updating profiles</td><td><strong style="color:var(--good)">Built</strong> (prototype) — J6/J7</td></tr>
+      <tr><td><strong>R5</strong></td><td>Re-optimise on drift</td><td><strong style="color:var(--good)">Built</strong> (prototype) — J8/J9</td></tr>
+      <tr><td><strong>R6</strong></td><td>Evaluate against an exact baseline</td><td><strong style="color:var(--good)">Built</strong> — the harness</td></tr>
+      <tr><td><strong>R7</strong></td><td>Execution monitoring</td><td><strong style="color:var(--bad)">Absent</strong></td></tr>
+      <tr><td><strong>R8</strong></td><td>Improve reliability</td><td><strong style="color:var(--bad)">Absent</strong> — scoped by O10: it is a floor, not an objective</td></tr>
+      <tr><td><strong>R9</strong></td><td>Multi-agent framework integration</td><td><strong style="color:var(--bad)">Absent</strong> — blocked on O11, still open with the advisor</td></tr>
+    </tbody>
+  </table>
+
+  <div class="flag">
+    <p><strong>R7–R9 come from the advisor's original brief.</strong> They are listed rather than
+    quietly dropped, and Chapter 4 presents them as Semester 2 scope. A reader of our architecture
+    should never be able to discover an unbuilt requirement that we did not name first.</p>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>This slide is deliberately uncomfortable and should stay that way.</em> One third of the
+    stated requirements have no code. Saying it plainly here costs far less than having it extracted
+    in the M1 defense.</p>
+    <p>R9 is blocked on O11, which is still an open advisor question — flag it in Part 7.</p>
+  </div>
+</section>
+
+<!-- ============ 9 WHAT WE BUILT ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 4 · The proof-of-concept</p>
+  <h2>What exists, and how to check it</h2>
+
+  <p class="lead">The PoC is <strong>not</strong> a scaled-down system. It exists to answer four
+  questions before the real system is written. A negative answer is a success — "Track B gives no
+  advantage" would have saved a semester.</p>
+
+  <div class="tiles">
+    <div class="tile"><div class="k">Tests</div><div class="v">647</div><div class="s">passing, 4 skipped · <code>pytest -q</code></div></div>
+    <div class="tile"><div class="k">Findings</div><div class="v">35</div><div class="s">chronological, incl. superseded</div></div>
+    <div class="tile"><div class="k">Conditions</div><div class="v">15</div><div class="s">runnable allocator configs</div></div>
+    <div class="tile"><div class="k">Generators</div><div class="v">3</div><div class="s">deliberately opposing structure</div></div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>Built in this order — each verifiable before the next</h3>
+      <pre><code>types.py          the data model
+invariants.py     I1–I5, called everywhere
+instances/        generators + hand-verified fixture
+exact_milp.py     ground truth — returns 280
+provisioning.py   THE central component
+decision_rule.py  shared routing rule
+track_c_lp.py     LP relaxation + repair
+track_b_lagr.py   Lagrangian bound
+track_a_greedy.py greedy — returns 300, which is the point
+harness/          matched-condition runner
+prototype/        the closed loop</code></pre>
+    </div>
+    <div>
+      <h3>Invariants — asserted on every result, everywhere</h3>
+      <pre><code>I1  every task appears exactly once      (C1)
+I2  load routed to m ≤ n[m]·thr(m)      (C2)
+I3  Σ n[m]·gpu(m) ≤ B                   (C3)
+I4  every routed profile is in C(t)
+I5  n[m] ≥ 1 for every profile used</code></pre>
+      <p class="small">All three tracks have relaxation or rounding steps that can silently emit
+      invalid answers. <strong>This is the highest-value test infrastructure in the repo</strong> —
+      it is wired in at build step 2 and called from every track.</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>The build order is the argument: <strong>the exact solver was built before any heuristic</strong>,
+    because nothing can be checked for correctness without ground truth.</p>
+    <p>Greedy returning 300 on the fixture is an <em>asserted test</em>, not a bug. We test that our
+    heuristic fails where we predicted it would.</p>
+  </div>
+</section>
+
+<!-- ============ 10 THE FOUR ANSWERS ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 5 · Findings</p>
+  <h2>The four questions, answered</h2>
+
+  <table>
+    <thead><tr><th style="width:7%"></th><th style="width:26%">Question</th><th>Answer</th><th style="width:16%">Verified</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>T1</strong></td><td>Which constraint should Track B relax? Does its bound beat the LP?</td>
+        <td><strong>(C1).</strong> Tighter than the LP on <strong>53/53</strong> instances across all
+        three generators — <em>wherever Track B has a feasible incumbent.</em> The (C2) arm is worst everywhere</td>
+        <td class="small">F35 · 4 Sep<br><span class="muted">changed twice that day</span></td>
+      </tr>
+      <tr>
+        <td><strong>T2</strong></td><td>Can greedy be defeated by aggregate coupling?</td>
+        <td><strong>Yes.</strong> Proven on the fixture, confirmed at scale. <code>A+subset</code> fixes it —
+        <strong>never worse</strong> than plain greedy on 72 paired instances (better on 54, identical on 18)</td>
+        <td class="small">F32 · 4 Sep</td>
+      </tr>
+      <tr>
+        <td><strong>T3</strong></td><td>Over what budget range is there interesting structure?</td>
+        <td><strong>Wherever price per GPU is not constant.</strong> The budget changes the optimal cost in
+        <strong>24/25</strong> heterogeneous instances against <strong>0–4/25</strong> where price tracks GPU count</td>
+        <td class="small">F33 · 4 Sep</td>
+      </tr>
+      <tr>
+        <td><strong>T4</strong></td><td>Is Track A worth its complexity vs Track C?</td>
+        <td><strong>Plain greedy, no. <code>A+subset</code>, yes.</strong> Track C's real virtue is
+        <em>bounded</em> runtime, not average speed</td>
+        <td class="small">F29/F30/F32<br><span class="muted">weakest of the four</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="flag good">
+    <p><strong>Two of these answers exist only because we distrusted our own measurements.</strong>
+    T3 was "the budget is nearly inert" for weeks — until we noticed that was a property of our
+    instances, not the problem. The next three slides are those two stories.</p>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Each row carries the finding and the date it was last verified, plus the script that
+    regenerates it. If someone challenges a number, the answer is "here is the command", not "I
+    remember it being right".</p>
+    <p>T4's row says outright it is the weakest of the four. Say that before you are asked — its
+    decision criteria ask an A-vs-C question the data has moved past.</p>
+  </div>
+</section>
+
+<!-- ============ 11 T3 CHART ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 5 · T3 — and a correction to ourselves</p>
+  <h2>The budget was never inert. Our instances were homogeneous.</h2>
+
+  <div class="cols">
+    <div>
+      <figure>
+        <div class="viz">
+          <p class="figtitle">Does the GPU budget change the optimal cost?</p>
+          <p class="figsub">Same tasks, same profiles — only <em>B</em> varies. 25 seeds, 16 tasks, 8 profiles.</p>
+          <svg viewBox="0 0 460 220" width="100%" height="220" role="img"
+               aria-label="Bar chart: C3 changes the optimum in 16% of uniform instances, 0% of structured, and 96% of heterogeneous.">
+            <g class="grid">
+              <line x1="150" y1="10" x2="150" y2="170"></line>
+              <line x1="225" y1="10" x2="225" y2="170"></line>
+              <line x1="300" y1="10" x2="300" y2="170"></line>
+              <line x1="375" y1="10" x2="375" y2="170"></line>
+            </g>
+            <!-- bars: scale 300px = 100%, x0 = 150 -->
+            <g>
+              <text x="142" y="34" text-anchor="end" class="catlabel">uniform</text>
+              <rect x="150" y="22" width="48" height="18" rx="4" fill="var(--series-1)"></rect>
+              <text x="206" y="36" class="barlabel">16%  ·  4/25</text>
+
+              <text x="142" y="79" text-anchor="end" class="catlabel">structured</text>
+              <!-- zero value: no mark is drawn. The direct label carries it. -->
+              <text x="156" y="81" class="barlabel" style="fill:var(--text-secondary)">0%  ·  0/25 — never binds</text>
+
+              <text x="142" y="124" text-anchor="end" class="catlabel" style="font-weight:640;fill:var(--text-primary)">heterogeneous</text>
+              <rect x="150" y="112" width="288" height="18" rx="4" fill="var(--series-3)"></rect>
+              <text x="150" y="150" class="barlabel" style="fill:var(--text-primary)">96%  ·  24/25</text>
+            </g>
+            <g class="axis"><line x1="150" y1="170" x2="450" y2="170"></line></g>
+            <g class="tick">
+              <text x="150" y="186" text-anchor="middle">0</text>
+              <text x="225" y="186" text-anchor="middle">25</text>
+              <text x="300" y="186" text-anchor="middle">50</text>
+              <text x="375" y="186" text-anchor="middle">75</text>
+              <text x="450" y="186" text-anchor="middle">100%</text>
+            </g>
+            <text x="300" y="208" text-anchor="middle" class="tick">% of instances where (C3) changes the optimal cost</text>
+          </svg>
+          <button class="tblbtn" onclick="this.nextElementSibling.classList.toggle('on')">Table view</button>
+          <div class="datatable">
+            <table>
+              <thead><tr><th>Generator</th><th>corr(price, gpus)</th><th>(C3) binds</th><th>Cost inflation at tightest budget</th></tr></thead>
+              <tbody>
+                <tr><td>uniform</td><td class="num">+0.959</td><td class="num">4/25 (16%)</td><td class="num">mean 2.01%, max 2.85%</td></tr>
+                <tr><td>structured</td><td class="num">+0.999</td><td class="num">0/25 (0%)</td><td class="num">—</td></tr>
+                <tr><td><strong>heterogeneous</strong></td><td class="num"><strong>+0.024</strong></td><td class="num"><strong>24/25 (96%)</strong></td><td class="num"><strong>median 15.4%, max 52.2%</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <figcaption>F33 · <code>scripts/audit_budget_binding.py</code></figcaption>
+      </figure>
+    </div>
+    <div>
+      <h3>What went wrong, and how we caught it</h3>
+      <p>Both original generators set <code>price = gpus × constant</code>. That is a
+      <strong>homogeneous fleet</strong>, where minimising cost and minimising GPUs are nearly the
+      same objective — so the budget had almost nothing left to decide.</p>
+      <p>We only noticed because <strong>it contradicted our own premise.</strong> This project is
+      about routing across <em>heterogeneous</em> profiles. A fleet where every GPU costs the same
+      is the one case where that premise does not apply.</p>
+
+      <h3>The check</h3>
+      <p>Murakkab reports GPU count, energy and dollar cost as <strong>three separate numbers</strong>
+      on one matched workload — and they move by three different factors (÷2.82, ÷3.72, ÷4.33). Cost
+      per GPU falls to 0.65×. <strong>Price is not a multiple of GPU count.</strong></p>
+      <p>So we built a third generator modelling a local, owned, heterogeneous fleet, changed nothing
+      else, and re-ran. <strong>The result reversed.</strong></p>
+
+      <div class="flag good">
+        <p class="small"><strong>Closes O7.</strong> The budget binds wherever price per GPU is not
+        constant — which, on our own premise, is the normal case. F26's "nearly inert" describes our
+        old instances, and should only ever be quoted that way.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>This is the strongest slide in the deck.</em> It is the clearest evidence that our
+    methodology is real rather than decorative: we suspected our own instrument, built a new one, and
+    it overturned one of our own headline findings.</p>
+    <p>If asked "how do you know your generators are realistic?" — this is the answer. We do not, and
+    that is exactly why there are three of them with deliberately opposing structure.</p>
+    <p>Note what is <em>not</em> claimed: the first two generators are not retracted. They are valid
+    models of a rented homogeneous fleet.</p>
+  </div>
+</section>
+
+<!-- ============ 12 T1 CHART ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 5 · T1 — and a confound we caught in ourselves</p>
+  <h2>Track B's bound holds. What fails is finding a primal.</h2>
+
+  <figure>
+    <div class="viz">
+      <p class="figtitle">Lagrangian bound vs LP bound — paired difference per instance</p>
+      <p class="figsub">Positive = Track B is tighter. Dots are means; whiskers are 95% bootstrap intervals.</p>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--series-1)"></span>Track B found a feasible incumbent</span>
+        <span><span class="sw" style="background:var(--series-2)"></span>Track B found none</span>
+      </div>
+      <svg viewBox="0 0 640 250" width="100%" height="250" role="img"
+           aria-label="Dot plot with confidence intervals. Where Track B finds a primal the paired difference is positive on all three generators; where it does not, on heterogeneous, it is negative.">
+        <!-- x scale: -14..+18 over x 150..610  => px per unit = 460/32 = 14.375 ; x(0)=150+14*14.375=351.25 -->
+        <g class="grid">
+          <line x1="150" y1="18" x2="150" y2="196"></line>
+          <line x1="207.5" y1="18" x2="207.5" y2="196"></line>
+          <line x1="265" y1="18" x2="265" y2="196"></line>
+          <line x1="408.75" y1="18" x2="408.75" y2="196"></line>
+          <line x1="466.25" y1="18" x2="466.25" y2="196"></line>
+          <line x1="523.75" y1="18" x2="523.75" y2="196"></line>
+          <line x1="581.25" y1="18" x2="581.25" y2="196"></line>
+        </g>
+        <line class="zero" x1="351.25" y1="14" x2="351.25" y2="200"></line>
+        <text x="351.25" y="228" text-anchor="middle" class="tick" style="fill:var(--text-secondary)">no advantage</text>
+
+        <!-- uniform, found: +5.22 [4.36, 6.05] -->
+        <text x="142" y="42" text-anchor="end" class="catlabel">uniform · 24/24</text>
+        <line x1="413.9" y1="38" x2="438.2" y2="38" stroke="var(--series-1)" stroke-width="2"></line>
+        <line x1="413.9" y1="32" x2="413.9" y2="44" stroke="var(--series-1)" stroke-width="2"></line>
+        <line x1="438.2" y1="32" x2="438.2" y2="44" stroke="var(--series-1)" stroke-width="2"></line>
+        <circle cx="426.3" cy="38" r="5.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"></circle>
+        <text x="452" y="42" class="barlabel">+5.22 pp</text>
+
+        <!-- structured, found: +13.46 [10.32, 16.71] -->
+        <text x="142" y="82" text-anchor="end" class="catlabel">structured · 22/22</text>
+        <line x1="499.6" y1="78" x2="591.4" y2="78" stroke="var(--series-1)" stroke-width="2"></line>
+        <line x1="499.6" y1="72" x2="499.6" y2="84" stroke="var(--series-1)" stroke-width="2"></line>
+        <line x1="591.4" y1="72" x2="591.4" y2="84" stroke="var(--series-1)" stroke-width="2"></line>
+        <circle cx="544.7" cy="78" r="5.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"></circle>
+        <text x="452" y="66" class="barlabel">+13.46 pp</text>
+
+        <!-- heterogeneous found: +5.84 [3.86, 7.64] -->
+        <text x="142" y="126" text-anchor="end" class="catlabel" style="font-weight:640;fill:var(--text-primary)">heterogeneous · 7/7</text>
+        <line x1="406.7" y1="122" x2="461.1" y2="122" stroke="var(--series-1)" stroke-width="2"></line>
+        <line x1="406.7" y1="116" x2="406.7" y2="128" stroke="var(--series-1)" stroke-width="2"></line>
+        <line x1="461.1" y1="116" x2="461.1" y2="128" stroke="var(--series-1)" stroke-width="2"></line>
+        <circle cx="435.2" cy="122" r="5.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"></circle>
+        <text x="475" y="126" class="barlabel">+5.84 pp</text>
+
+        <!-- heterogeneous none: -7.42 [-12.95, -2.26] -->
+        <text x="142" y="168" text-anchor="end" class="catlabel">heterogeneous · 3/10</text>
+        <line x1="165" y1="164" x2="318.8" y2="164" stroke="var(--series-2)" stroke-width="2"></line>
+        <line x1="165" y1="158" x2="165" y2="170" stroke="var(--series-2)" stroke-width="2"></line>
+        <line x1="318.8" y1="158" x2="318.8" y2="170" stroke="var(--series-2)" stroke-width="2"></line>
+        <circle cx="244.6" cy="164" r="5.5" fill="var(--series-2)" stroke="var(--surface-1)" stroke-width="2"></circle>
+        <text x="158" y="150" class="barlabel">−7.42 pp</text>
+
+        <g class="axis"><line x1="150" y1="196" x2="610" y2="196"></line></g>
+        <g class="tick">
+          <text x="150" y="212" text-anchor="middle">−14</text>
+          <text x="207.5" y="212" text-anchor="middle">−10</text>
+          <text x="265" y="212" text-anchor="middle">−6</text>
+          <text x="351.25" y="212" text-anchor="middle">0</text>
+          <text x="408.75" y="212" text-anchor="middle">+4</text>
+          <text x="466.25" y="212" text-anchor="middle">+8</text>
+          <text x="523.75" y="212" text-anchor="middle">+12</text>
+          <text x="581.25" y="212" text-anchor="middle">+16</text>
+        </g>
+      </svg>
+      <button class="tblbtn" onclick="this.nextElementSibling.classList.toggle('on')">Table view</button>
+      <div class="datatable">
+        <table>
+          <thead><tr><th>Group</th><th>n</th><th>Paired difference (pp)</th><th>95% CI</th><th>Tighter on</th></tr></thead>
+          <tbody>
+            <tr><td>uniform — B found a primal</td><td class="num">24</td><td class="num">+5.22</td><td class="num">[4.36, 6.05]</td><td class="num">24/24</td></tr>
+            <tr><td>structured — B found a primal</td><td class="num">22</td><td class="num">+13.46</td><td class="num">[10.32, 16.71]</td><td class="num">22/22</td></tr>
+            <tr><td>heterogeneous — B found a primal</td><td class="num">7</td><td class="num">+5.84</td><td class="num">[3.86, 7.64]</td><td class="num">7/7</td></tr>
+            <tr><td>heterogeneous — B found none</td><td class="num">10</td><td class="num">−7.42</td><td class="num">[−12.95, −2.26]</td><td class="num">3/10</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <figcaption>F35 · <code>scripts/audit_t1_arms.py</code>. F34 reported the pooled figure and got the headline wrong; F35 corrected it the same day.</figcaption>
+  </figure>
+
+  <div class="cols">
+    <div>
+      <p><strong>The mistake we made.</strong> Pooled, heterogeneous looked like −2.17 pp and T1
+      looked like it had collapsed. That was <strong>two populations with different mechanisms
+      averaged together</strong> — the average of a real effect and an artefact.</p>
+    </div>
+    <div>
+      <p><strong>Why the negative group is our fault, not the method's.</strong> Track B's step rule
+      aims the multipliers at the gap between the dual value and a <em>known feasible cost</em>. With
+      no incumbent there is no target. By Geoffrion the dual optimum is <strong>≥ the LP bound</strong>,
+      so a shortfall proves our multipliers are unconverged — it cannot mean the relaxation is weak.</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>Volunteer that F34 was wrong.</em> Being the people who caught it within hours is the
+    point. The lesson generalises and is worth stating: before reporting a pooled difference, ask what
+    would make an instance behave differently, and split on it.</p>
+    <p>If challenged "your bound is sometimes worse than the LP, isn't that disqualifying?" — theory
+    forbids it at the dual optimum, so it localises the fault precisely. That is a better answer than
+    a number.</p>
+    <p>The real open problem moved: it is Track B's <strong>feasibility</strong> (7 of 17), not its bound.</p>
+  </div>
+</section>
+
+<!-- ============ 13 DIFFERENTIATOR ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 5 · The differentiator</p>
+  <h2>What the loop is actually for</h2>
+
+  <p class="lead">A static allocator does not fail loudly under drift. It keeps reporting success
+  while silently violating the reliability floor it was given.</p>
+
+  <div class="tiles">
+    <div class="tile"><div class="k">Required floor</div><div class="v">0.95</div><div class="s">the constraint both systems were given</div></div>
+    <div class="tile hero" style="border-color:var(--bad)"><div class="k">Static allocator delivers</div><div class="v" style="color:var(--bad)">0.542</div><div class="s"><strong>while reporting no change</strong></div></div>
+    <div class="tile hero" style="border-color:var(--good)"><div class="k">Adaptive loop delivers</div><div class="v" style="color:var(--good)">0.938</div><div class="s">detects drift, re-allocates</div></div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>The statistic that survives audit</h3>
+      <p>Paired difference <strong>+0.424, 95% CI [0.405, 0.442]</strong>, n = 20, mean = median —
+      no skew, a tight interval, and the effect holds strongly.</p>
+      <p class="small muted">Point figures 0.542 / 0.938 are F24 (8 seeds, both systems starting
+      correct, identical drift schedule). The paired interval is F30's audit at n = 20. Quote them
+      as two separate things — they are.</p>
+    </div>
+    <div>
+      <div class="flag">
+        <p><strong>The objection you will get:</strong> "your adaptive system costs 2.5× more."</p>
+        <p class="small">It does. And it is <strong>not like-for-like</strong> — the static system is
+        cheaper because it is failing its requirement. Comparing the cost of a system that meets its
+        floor against one that does not is not a cost comparison.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p><em>This is the number the room should remember.</em> Not the speedup — that one was retracted.</p>
+    <p>The word doing the work is <strong>silently</strong>. A system that fails loudly is an
+    operations problem; one that fails while reporting success is a correctness problem, and that is
+    what justifies the whole loop.</p>
+    <p>Caveat to volunteer: this is measured against a <em>simulated</em> executor. Real execution is
+    Semester 2 and is the biggest threat to this result.</p>
+  </div>
+</section>
+
+<!-- ============ 14 EVIDENCE ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 6 · Method</p>
+  <h2>Four headline numbers were retracted — by us</h2>
+
+  <p class="lead">All four failed the same way: <strong>a ratio of two means</strong>, which is not a
+  typical ratio when either distribution has a tail.</p>
+
+  <table>
+    <thead><tr><th style="width:34%">Do not say</th><th>Say instead</th></tr></thead>
+    <tbody>
+      <tr><td><s>"~110× faster than the exact solver"</s></td>
+          <td><strong>Median speedup is 5×.</strong> Argue <strong>bounded latency</strong>: 0.106 ± 0.020 s against 12.3 ± 10.3 s. <span class="muted">12.283 / 0.106 = 116 — that was the quoted number</span></td></tr>
+      <tr><td><s>"the bound is 3–6× tighter than the LP"</s></td>
+          <td>Paired difference <strong>12.6 pp [9.5, 15.6]</strong>; median ratio ~2–2.5×</td></tr>
+      <tr><td><s>"consolidation halves Track C's gap"</s></td>
+          <td><strong>Median improvement is 0.00%.</strong> It fixes a rare, severe failure — real, but tail-carried</td></tr>
+      <tr><td><s>"subset consolidation is a twenty-fold improvement"</s></td>
+          <td><strong>Never worse on 72 paired instances.</strong> Median per-instance ratio 1.53×. <span class="muted">And this ratio was <em>unstable</em> — 20.6× on one instance set, 2.41× on another</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="cols">
+    <div>
+      <h3>The rules that came out of it</h3>
+      <ul>
+        <li><strong>Never divide two means.</strong> Report the paired per-instance difference and its interval</li>
+        <li>A paired interval that <strong>crosses zero</strong> means the effect is not established</li>
+        <li>Treat a bare <code>N×</code> claim with no interval as <strong>unverified</strong></li>
+        <li><strong>The audit is not a one-time pass</strong> — anything merged from a branch is unaudited whatever its finding number</li>
+        <li>Before reporting a pooled difference, <strong>ask what would make an instance behave differently, and split on it</strong></li>
+      </ul>
+    </div>
+    <div>
+      <div class="flag good">
+        <p><strong>Why this belongs in the presentation rather than the appendix.</strong></p>
+        <p class="small">Most projects present results. Very few can present the audit that caught
+        their own. The fourth retraction was found <em>a week after</em> the first three, in material
+        merged from a branch — which is how we learned that rule five above was needed at all.</p>
+        <p class="small"><strong>Volunteer the limitations before you are asked.</strong> An examiner
+        who has to extract a weakness trusts you less than one you hand it to.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Deliver this as a section, not an apology. The framing is: we built the check that found these,
+    and we ran it on ourselves twice more after the first pass.</p>
+    <p>If someone asks how many numbers are still unaudited — the honest answer is that the corrections
+    table in <code>poc_findings_summary.md</code> is the live list, and every number in this deck is
+    on the audited side of it.</p>
+  </div>
+</section>
+
+<!-- ============ 15 LIMITATIONS ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 6 · Threats to validity</p>
+  <h2>What none of this establishes</h2>
+
+  <div class="cols">
+    <div>
+      <div class="card">
+        <h3 style="color:var(--bad)">1 · Nothing about real workloads</h3>
+        <p class="small">Three synthetic generators. <strong>One author wrote the distributions, the
+        tracks and the metrics.</strong> This is the strongest objection available against every
+        number in this deck.</p>
+        <p class="small"><strong>Our answer:</strong> three generators with deliberately opposing
+        structure — and the third one <em>overturned one of our own headline findings</em>. That is
+        what makes the check credible rather than decorative. It is still not real measurement.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--bad)">2 · Nothing about real execution</h3>
+        <p class="small">The loop's execution stage is <strong>simulated</strong>. Every drift result —
+        including the differentiator &mdash; rests on that simulator.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3 style="color:var(--warn)">3 · Track B's feasibility, not its bound</h3>
+        <p class="small">7 of 17 on heterogeneous instances. The bound is fine wherever it finds a
+        primal; finding one is the problem. <strong>This is now the interesting open problem.</strong></p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--warn)">4 · Runtime claims rest on our implementation</h3>
+        <p class="small">"Track B is ~100× slower" describes a <strong>pure-Python knapsack DP</strong>.
+        It should not be treated as settled until profiled — it could plausibly gain an order of
+        magnitude.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--warn)">5 · The compatibility score is unreconciled</h3>
+        <p class="small">Still marked <code>[PROPOSED]</code>, and the paper it should reconcile with
+        is not in the repo. It gates any drift-detection number.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Rehearse item 1 cold. "One author wrote everything" is the question most likely to be asked and
+    the one where a weak answer costs most.</p>
+    <p>Items 3–5 are open work with named owners, not unknowns. Say who owns each.</p>
+  </div>
+</section>
+
+<!-- ============ 16 DECISIONS ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 7 · The session · Confirm or object</p>
+  <h2>Five decisions, each with a default</h2>
+
+  <table>
+    <thead><tr><th style="width:5%"></th><th style="width:30%">Decision</th><th>Recommended default</th><th style="width:22%">If you object</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td><strong>Is §1 unchanged?</strong></td>
+          <td><strong style="color:var(--good)">Unchanged.</strong> Nothing measured contradicts C1/C2/C3 or the objective</td>
+          <td class="small">Say exactly what changes — a change to (C2) or the objective invalidates most results</td></tr>
+      <tr><td><strong>2</strong></td><td><strong>Budget anchor</strong> — §6.4's "one instance per profile" made 0–16 of 25 instances solvable; it now uses a reference allocation</td>
+          <td><strong style="color:var(--good)">Accept.</strong> Already amended<br>
+          <span class="small muted">Noting F31/F33: our generators tied price to GPU count, so (C3) barely bound</span></td>
+          <td class="small">T3 needs a different experimental axis</td></tr>
+      <tr><td><strong>3a</strong></td><td><strong>Plain Track A</strong> — 8–15% above optimum, worsens with scale</td>
+          <td><strong style="color:var(--good)">Cut as a reported track</strong>, move its feasibility lookahead into the shared decision rule</td>
+          <td class="small">Keep it, and T4's write-up must justify why</td></tr>
+      <tr><td><strong>3b</strong></td><td><strong><code>A+subset</code></strong> — recovers the fixture's 280, never worse on 72 paired instances</td>
+          <td><strong style="color:var(--good)">Keep as a live contender</strong></td>
+          <td class="small">Note its gap <em>grows</em> with scale — 2.35% at 8 tasks to 14.30% at 64. "Keep" ≠ "wins at size"</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>Track B</strong> — best bound we have; ~100× slower than exact as an allocator</td>
+          <td><strong style="color:var(--good)">Bound generator, not an allocator</strong></td>
+          <td class="small">Someone must profile its subproblem before any speed claim</td></tr>
+      <tr><td><strong>5</strong></td><td><strong>Scoped re-optimisation</strong> — a drifted profile is used by 84–100% of workflows</td>
+          <td><strong style="color:var(--good)">Drop scoping. Re-optimise globally</strong></td>
+          <td class="small">Define what "scoped" should mean instead</td></tr>
+    </tbody>
+  </table>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Read each default and pause. Silence is assent — say that explicitly before starting so nobody
+    thinks they missed their chance.</p>
+    <p>Decision 3 is the one that changed most recently: it used to be a single "cut Track A", which
+    predated <code>A+subset</code> shipping. Splitting it into 3a/3b is the honest framing.</p>
+    <p><strong>Record disagreements rather than resolving them.</strong> An unresolved disagreement
+    written down is a success; an unnoticed one is not.</p>
+  </div>
+</section>
+
+<!-- ============ 17 SIGNOFF ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 7 · The session · Ownership</p>
+  <h2>Five sign-offs, and what leaves the room</h2>
+
+  <div class="cols">
+    <div>
+      <h3>Each owner says "yes, that's what I'd have done" — or "no, change it"</h3>
+      <table>
+        <thead><tr><th style="width:22%">Decision</th><th style="width:14%">Owner</th><th>What was done</th></tr></thead>
+        <tbody>
+          <tr><td>M1 analogue</td><td><strong>035</strong></td><td>A feasibility lookahead. <em>Not</em> Cheng &amp; Nguyen's actual M1, which our documents never specified</td></tr>
+          <tr><td>Consolidation</td><td><strong>035/075</strong></td><td>Moves <em>all</em> tasks off one profile. Fixes a rare severe Track C failure; does <strong>not</strong> fix the fixture</td></tr>
+          <tr><td>Subset move</td><td><strong>035</strong></td><td>The k≤2 move that <strong>does</strong> fix the fixture. Its "twenty-fold" headline is withdrawn</td></tr>
+          <tr><td>Reliability estimator</td><td><strong>077</strong></td><td>§4.5's EMA reports 0.70 after 99 successes and one failure — and that number filters <code>C(t)</code>. Replaced with a counting estimator</td></tr>
+          <tr><td>Compatibility score</td><td><strong>077</strong></td><td>Invented, marked <code>[PROPOSED]</code>. Hatherley (2025) is not in the repo</td></tr>
+          <tr><td>Budget anchor</td><td><strong>083</strong></td><td>See decision 2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>The record</h3>
+      <pre><code>T0 session, __ September 2026
+Present: _______________________
+
+O10 (reliability): FLOOR — answered 3 Sep
+
+1.  §1 formulation:  unchanged / changed: ____
+2.  Budget anchor:   accepted / rejected
+3a. Plain Track A:   cut / kept
+3b. A+subset:        kept / cut
+4.  Track B:         bound only / also allocator
+5.  Scoped re-opt:   dropped / kept, as: ____
+
+Ownership accepted:
+  M1 analogue ......... 035  yes / change
+  Consolidation ....... 035/075  yes / change
+  Subset move ......... 035  yes / change
+  Reliability est. .... 077  yes / change
+  Compatibility score . 077  yes / change
+  Budget anchor ....... 083  yes / change
+
+Disagreements recorded, not resolved:
+  ______________________________</code></pre>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>The compatibility score is the weakest item on this sheet: 077 is being asked to ratify an
+    invented metric against a citation nobody has read. Flag it as such rather than letting it pass
+    on the nod.</p>
+  </div>
+</section>
+
+<!-- ============ 18 OPEN / NEXT ============ -->
+<section class="slide">
+  <p class="eyebrow">Part 7 · After this session</p>
+  <h2>What is open, and who owns it</h2>
+
+  <div class="cols">
+    <div>
+      <h3>Blocking or near-blocking</h3>
+      <table>
+        <tbody>
+          <tr><td><strong>O5</strong></td><td>Track B's step-size schedule. <strong>Promoted from "untuned defaults" to blocking</strong> — with no incumbent, its bound stalls below the LP's</td><td class="small">075</td></tr>
+          <tr><td>—</td><td><strong>Track B's feasibility</strong> — 7 of 17 on heterogeneous. The interesting problem now</td><td class="small">075/089</td></tr>
+          <tr><td><strong>O11</strong></td><td>Framework integration or standalone — gates R9</td><td class="small">Advisor</td></tr>
+          <tr><td>—</td><td>Compatibility score vs Hatherley (2025)</td><td class="small">077</td></tr>
+          <tr><td>—</td><td>Rewrite T4's decision criteria — they ask an A-vs-C question the data moved past</td><td class="small">089</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Answered, and not to be re-litigated</h3>
+      <table>
+        <tbody>
+          <tr><td><strong>O1</strong></td><td>No per-invocation cost term — provisioning cost only</td></tr>
+          <tr><td><strong>O7</strong></td><td>The budget binds wherever price per GPU is not constant (F33)</td></tr>
+          <tr><td><strong>O9</strong></td><td>Scoped re-optimisation is well-defined but <strong>vacuous</strong></td></tr>
+          <tr><td><strong>O10</strong></td><td>Reliability is a <strong>floor</strong>, not an objective</td></tr>
+          <tr><td><strong>O12</strong></td><td>The closed loop <strong>is</strong> a sufficient novelty claim for M1</td></tr>
+          <tr><td><strong>O13</strong></td><td><code>price(m)</code> is <strong>not</strong> a multiple of <code>gpu(m)</code>. Deployment target: <strong>local first</strong></td></tr>
+        </tbody>
+      </table>
+
+      <h3>The road to M1</h3>
+      <p class="small"><strong>Steps 1–3 done</strong> (branches merged, advisor answered, numbers
+      swept). <strong>Step 4 is today.</strong> Then Chapter 3 → Chapters 1, 2, 4 → slides → rehearse.
+      <strong>Freeze the numbers about a week out</strong> — every re-measurement after that is a
+      chance the deck and the chapters disagree in the room.</p>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Close on the freeze point. It is the one piece of process advice that prevents an avoidable
+    failure in the M1 defense.</p>
+  </div>
+</section>
+
+<!-- ============ 19 BACKUP INDEX ============ -->
+<section class="slide">
+  <p class="eyebrow">Backup · Depth on demand</p>
+  <h2>If they ask, here is where the answer lives</h2>
+
+  <table>
+    <thead><tr><th style="width:38%">Likely question</th><th>Answer, and where it comes from</th></tr></thead>
+    <tbody>
+      <tr><td>Why not always use the exact solver?</td><td>12.3 ± 10.3 s at 128 tasks, and unbounded without a time limit — a statistics run had to be killed after an hour on one instance. The loop re-solves on every drift signal</td></tr>
+      <tr><td>Why is Track C better at scale but not at 8 tasks?</td><td>Rounding error amortises over more tasks. Below ~8 tasks no heuristic is justified — the MILP is optimal in 32 ms</td></tr>
+      <tr><td>Your adaptive system costs 2.5× more. Why is that good?</td><td>Not like-for-like. The static system is cheaper because it is silently failing its floor</td></tr>
+      <tr><td>What if a profile is briefly unlucky?</td><td>It gets abandoned and never re-tested (F23). Fixed by filtering on an <strong>upper</strong> confidence bound (F25) — built, measured, off by default</td></tr>
+      <tr><td>Why does the budget never seem to matter?</td><td><strong>It does &mdash; we were measuring it wrong.</strong> See <em>&ldquo;The budget was never inert&rdquo;</em>. 0/25 &rarr; 24/25 once price stopped tracking GPU count</td></tr>
+      <tr><td>Your Lagrangian bound is sometimes worse than the LP. Broken relaxation?</td><td>No — theory forbids that at the dual optimum, so it proves our <em>multipliers</em> are unconverged. See <em>&ldquo;Track B&rsquo;s bound holds&rdquo;</em></td></tr>
+      <tr><td>One author wrote the generators, tracks and metrics. How do you know any of it?</td><td>Three generators with opposing structure; the third overturned one of our own findings. Still not real measurement &mdash; see <em>&ldquo;What none of this establishes&rdquo;</em></td></tr>
+      <tr><td>Which constraint couples workflows?</td><td><strong>(C2).</strong> Two tasks in different workflows affect each other only through shared instance capacity</td></tr>
+      <tr><td>What would you do differently?</td><td>Measure the methods, not just the deliverables. Two of our four self-corrections were found by re-reading our own method sections, not by new experiments</td></tr>
+    </tbody>
+  </table>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Do not present this slide. Jump to it when a question lands, or leave it for the appendix of
+    the printed deck.</p>
+    <p>Every row here is rehearsable in under 30 seconds. If an answer takes longer than that, it
+    needs its own backup slide.</p>
+  </div>
+</section>
+
+<!-- ============ 20 REFERENCE ============ -->
+<section class="slide">
+  <p class="eyebrow">Reference</p>
+  <h2>Where everything lives</h2>
+
+  <div class="cols">
+    <div>
+      <h3>Read in this order</h3>
+      <table>
+        <tbody>
+          <tr><td><code>docs/ORIENTATION.md</code></td><td class="small">The whole project from zero, with pointers into everything else</td></tr>
+          <tr><td><code>poc_findings_summary.md</code></td><td class="small">What we believe now + <strong>the corrections table</strong></td></tr>
+          <tr><td><code>proposal_narrative.md</code></td><td class="small">Why the findings form one argument</td></tr>
+          <tr><td><code>System_Architecture_v2.md</code></td><td class="small">Design of record. §1 formulation, §1.8 problem class</td></tr>
+          <tr><td><code>poc_findings.md</code></td><td class="small">All 35 findings in order, including retracted</td></tr>
+        </tbody>
+      </table>
+
+      <h3>For this session</h3>
+      <table>
+        <tbody>
+          <tr><td><code>T0_briefing.md</code></td><td class="small">The agenda — confirm-or-object, defaults, sign-off template</td></tr>
+          <tr><td><code>T0_Formulation_Ratification_Briefing.md</code></td><td class="small">The formal model being ratified</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Reproduce any number in this deck</h3>
+      <pre><code># the whole suite
+python -m pytest -q              → 647 pass, 4 skip
+
+# all 15 conditions end to end
+python -m poc.harness.runner
+
+# T3 — does the budget bind?
+python scripts/audit_budget_binding.py
+
+# T1 — all three relaxation arms
+python scripts/audit_t1_arms.py
+
+# T2 — the subset-move audit
+python scripts/audit_f20_subset.py</code></pre>
+
+      <div class="flag">
+        <p class="small"><strong>The one rule for quoting a number.</strong> Check the
+        <em>"numbers that were corrected"</em> table in <code>poc_findings_summary.md</code> first.
+        Where this deck and that table disagree, <strong>the table wins</strong> — and please fix the
+        deck.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="k">Speaker notes</div>
+    <p>Every claim in this deck is a command someone can run. That is the standard we hold the written
+    proposal to as well.</p>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i = 0;
+  function render(){
+    slides.forEach(function(s,n){ s.classList.toggle('on', n===i); });
+    document.getElementById('count').textContent = (i+1) + ' / ' + slides.length;
+    document.getElementById('prog').style.width = ((i+1)/slides.length*100) + '%';
+    window.scrollTo(0,0);
+    try{ location.hash = 's' + (i+1); }catch(e){}
+  }
+  window.go = function(d){ i = Math.min(slides.length-1, Math.max(0, i+d)); render(); };
+  window.toggleNotes = function(){
+    document.body.classList.toggle('notes-on');
+    document.getElementById('nbtn').style.borderColor =
+      document.body.classList.contains('notes-on') ? 'var(--accent)' : '';
+  };
+  window.toggleTheme = function(){
+    var r = document.documentElement;
+    r.setAttribute('data-theme', r.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+  };
+  document.addEventListener('keydown', function(e){
+    if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ e.preventDefault(); go(1); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(-1); }
+    else if(e.key==='Home'){ i=0; render(); }
+    else if(e.key==='End'){ i=slides.length-1; render(); }
+    else if(e.key==='n'||e.key==='N'){ toggleNotes(); }
+    else if(e.key==='d'||e.key==='D'){ toggleTheme(); }
+  });
+  var m = /^#s(\d+)$/.exec(location.hash||'');
+  if(m){ i = Math.min(slides.length-1, Math.max(0, parseInt(m[1],10)-1)); }
+  render();
+})();
+</script>
+</body>
+</html>

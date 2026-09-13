@@ -1,0 +1,3430 @@
+{
+  "batch_id": "eval-batch-001",
+  "description": "3 concurrent OS/infrastructure incident-detection workflow instances, real multi-host Zookeeper log data, offline batch (fixed before optimization)",
+  "workflows": [
+    {
+      "workflow_id": "wf-1",
+      "source": "zookeeper-host-10.10.34.11",
+      "dag": {
+        "nodes": [
+          {
+            "id": "n1",
+            "task_type": "parse_log_line"
+          },
+          {
+            "id": "n2",
+            "task_type": "classify_severity",
+            "depends_on": [
+              "n1"
+            ]
+          },
+          {
+            "id": "n3",
+            "task_type": "enrich_context",
+            "depends_on": [
+              "n1"
+            ]
+          },
+          {
+            "id": "n4",
+            "task_type": "generate_report",
+            "depends_on": [
+              "n2",
+              "n3"
+            ]
+          }
+        ]
+      },
+      "input_data": {
+        "log_lines": 181,
+        "records": [
+          {
+            "timestamp": "2015-07-29 19:04:12,394",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:45307"
+          },
+          {
+            "timestamp": "2015-07-29 19:13:24,370",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:57707"
+          },
+          {
+            "timestamp": "2015-07-29 19:13:54,220",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:45382"
+          },
+          {
+            "timestamp": "2015-07-29 19:14:44,256",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:45440"
+          },
+          {
+            "timestamp": "2015-07-29 19:15:57,854",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:57895"
+          },
+          {
+            "timestamp": "2015-07-29 19:16:44,440",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47727"
+          },
+          {
+            "timestamp": "2015-07-29 19:17:57,939",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:58035"
+          },
+          {
+            "timestamp": "2015-07-29 19:18:14,511",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47838"
+          },
+          {
+            "timestamp": "2015-07-29 19:19:04,661",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:58116"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:36,502",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:45957"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:46,728",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:58303"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:49,960",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48096"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:03,324",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48141"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:20,143",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:58421"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:26,617",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46128"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:26,830",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:58452"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:36,659",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46173"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:40,083",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48280"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:00,237",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:58565"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:16,848",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48413"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:20,094",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46329"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:30,110",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46360"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:46,827",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46424"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:53,488",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46440"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:10,286",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48600"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:13,553",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46519"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:23,563",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46552"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:03,857",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:59016"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:07,107",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48811"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:10,536",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:59037"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:23,889",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:59078"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:30,398",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46798"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:37,062",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46812"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:37,257",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:59130"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:40,484",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48922"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:55,066",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47327"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:58,827",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47351"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:02,167",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47366"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:08,431",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47390"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:08,636",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:59614"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:28,473",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47472"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:32,018",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:59689"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:35,361",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:59706"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:38,703",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:59722"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:41,844",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47540"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:48,527",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47571"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:58,547",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47615"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:01,988",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49588"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:08,668",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49610"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:35,500",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:59925"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:02,019",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47885"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:02,117",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49806"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:15,586",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60070"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:38,863",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49940"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:08,922",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:50043"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:39,095",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60366"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:55,590",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48289"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:55,793",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60423"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:12,503",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60489"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:29,085",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:50332"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:35,764",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:50354"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:49,042",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48503"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:59,143",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:50434"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:02,398",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48563"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:12,423",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48609"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:13,727",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48612"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:15,965",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60717"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:19,303",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60726"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:22,532",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:50526"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:25,983",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60750"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:29,212",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:50546"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:42,575",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:50597"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:49,364",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60834"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:52,595",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:50633"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:05,862",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48814"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:05,863",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48817"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:12,745",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60918"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:29,448",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60984"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:32,788",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:60996"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:52,717",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:50849"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:55,969",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49023"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:09,526",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:32891"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:19,544",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:32924"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:42,928",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:33010"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:46,073",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49204"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:49,498",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:51050"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:02,861",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:51104"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:26,349",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:33165"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:36,365",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:33198"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:43,049",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:33225"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:49,730",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:33250"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:49,735",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:33255"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:53,074",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:33266"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:56,302",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:51296"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:59,746",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:33282"
+          },
+          {
+            "timestamp": "2015-07-29 19:37:12,920",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49518"
+          },
+          {
+            "timestamp": "2015-07-29 19:37:19,683",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:51380"
+          },
+          {
+            "timestamp": "2015-07-29 23:44:21,576",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:49557 which had sessionid 0x14ed93111f20048"
+          },
+          {
+            "timestamp": "2015-07-30 13:47:25,927",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:45997"
+          },
+          {
+            "timestamp": "2015-07-30 14:42:40,474",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:49346"
+          },
+          {
+            "timestamp": "2015-07-30 14:47:15,835",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:1:ZooKeeperServer@595",
+            "message": "Established session 0x14ed93111f20079 with negotiated timeout 20000 for client /10.10.34.11:49800"
+          },
+          {
+            "timestamp": "2015-07-30 14:52:36,477",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:1:ZooKeeperServer@595",
+            "message": "Established session 0x14ed93111f2007c with negotiated timeout 10000 for client /10.10.34.11:50276"
+          },
+          {
+            "timestamp": "2015-07-30 14:53:21,340",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:50286"
+          },
+          {
+            "timestamp": "2015-07-30 15:00:24,824",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:50301"
+          },
+          {
+            "timestamp": "2015-07-30 15:00:24,825",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:1:ZooKeeperServer@595",
+            "message": "Established session 0x14ed93111f20082 with negotiated timeout 10000 for client /10.10.34.11:50301"
+          },
+          {
+            "timestamp": "2015-07-30 15:23:21,827",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:50402"
+          },
+          {
+            "timestamp": "2015-07-30 15:41:40,669",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:50940 which had sessionid 0x14ed93111f20099"
+          },
+          {
+            "timestamp": "2015-07-30 16:09:17,019",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:52893 which had sessionid 0x14ed93111f2009b"
+          },
+          {
+            "timestamp": "2015-07-30 16:18:34,053",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:53821"
+          },
+          {
+            "timestamp": "2015-07-30 16:34:50,091",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.11:54411; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 17:06:40,616",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:54632"
+          },
+          {
+            "timestamp": "2015-07-30 17:13:32,714",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:54738"
+          },
+          {
+            "timestamp": "2015-07-30 17:36:31,976",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:54983 which had sessionid 0x14ed93111f200f0"
+          },
+          {
+            "timestamp": "2015-07-30 21:03:44,632",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.11:40489; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 21:03:44,634",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:1:ZooKeeperServer@595",
+            "message": "Established session 0x14ede63a5a7004b with negotiated timeout 10000 for client /10.10.34.11:40489"
+          },
+          {
+            "timestamp": "2015-07-31 21:23:08,968",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:40061"
+          },
+          {
+            "timestamp": "2015-07-31 21:23:08,969",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:40061"
+          },
+          {
+            "timestamp": "2015-08-10 18:13:25,200",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:1:ZooKeeperServer@595",
+            "message": "Established session 0x14f05578bd80020 with negotiated timeout 10000 for client /10.10.34.11:38390"
+          },
+          {
+            "timestamp": "2015-08-18 16:09:13,285",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.11:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:34051"
+          },
+          {
+            "timestamp": "2015-08-20 13:28:51,889",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:54839"
+          },
+          {
+            "timestamp": "2015-08-20 17:12:29,467",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:56471 (no session established for client)"
+          },
+          {
+            "timestamp": "2015-08-20 17:22:22,288",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:1:ZooKeeperServer@595",
+            "message": "Established session 0x14f4a6318b80005 with negotiated timeout 10000 for client /10.10.34.11:56492"
+          },
+          {
+            "timestamp": "2015-07-29 19:03:35,413",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.11:52225:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:03:54,584",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.11:52241:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:04:30,989",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.11:52264:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.11:52264 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:04:30,989",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.11:52265:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:04:40,999",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.11:52273:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:13:46,128",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.11:52308:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.11:52308 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:15:16,204",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.11:52419:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:16:06,243",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.11:52476:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.11:52476 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:16:26,268",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.11:52502:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.11:52502 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:18:56,377",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.11:52703:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.11:52703 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:20:56,605",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.11:52814:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:20:56,608",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.11:52818:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.11:52818 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:16,619",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.11:52844:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.11:52844 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:26,625",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.11:52855:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:52:20,581",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:50822"
+          },
+          {
+            "timestamp": "2015-07-29 19:57:37,058",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:50926"
+          },
+          {
+            "timestamp": "2015-07-29 20:15:01,897",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:51168"
+          },
+          {
+            "timestamp": "2015-07-29 23:49:40,337",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:53468"
+          },
+          {
+            "timestamp": "2015-07-30 13:34:19,139",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:48701"
+          },
+          {
+            "timestamp": "2015-07-30 14:52:27,546",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:53520 which had sessionid 0x24ed9311942005f"
+          },
+          {
+            "timestamp": "2015-07-30 15:24:39,217",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:53857 which had sessionid 0x24ed93119420082"
+          },
+          {
+            "timestamp": "2015-07-30 15:35:06,129",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:54078"
+          },
+          {
+            "timestamp": "2015-07-30 15:35:20,505",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:54134"
+          },
+          {
+            "timestamp": "2015-07-30 17:33:11,443",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.11:58424; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 17:49:05,204",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:52866"
+          },
+          {
+            "timestamp": "2015-07-30 18:18:28,772",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:53422"
+          },
+          {
+            "timestamp": "2015-07-30 19:19:56,251",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:2:ZooKeeperServer@595",
+            "message": "Established session 0x24ede63a01b002a with negotiated timeout 20000 for client /10.10.34.11:54338"
+          },
+          {
+            "timestamp": "2015-07-30 19:35:08,093",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:54576"
+          },
+          {
+            "timestamp": "2015-07-31 00:17:51,716",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:57796"
+          },
+          {
+            "timestamp": "2015-07-31 21:32:06,109",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:2:ZooKeeperServer@595",
+            "message": "Established session 0x24ee30a54f5001e with negotiated timeout 20000 for client /10.10.34.11:45101"
+          },
+          {
+            "timestamp": "2015-07-31 21:32:06,121",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:2:ZooKeeperServer@595",
+            "message": "Established session 0x24ee30a54f5001f with negotiated timeout 10000 for client /10.10.34.11:45102"
+          },
+          {
+            "timestamp": "2015-08-10 18:12:47,212",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:50990"
+          },
+          {
+            "timestamp": "2015-08-10 18:12:48,994",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:2:ZooKeeperServer@595",
+            "message": "Established session 0x24f0557806a001e with negotiated timeout 10000 for client /10.10.34.11:51000"
+          },
+          {
+            "timestamp": "2015-08-10 18:25:27,950",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.11:51259; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-08-10 18:25:27,951",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:51260"
+          },
+          {
+            "timestamp": "2015-08-10 18:35:11,692",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:51562"
+          },
+          {
+            "timestamp": "2015-08-18 16:09:18,900",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "LearnerHandler-/10.10.34.11:49928:Leader@598",
+            "message": "Have quorum of supporters; starting up and setting last processed zxid: 0xb00000000"
+          },
+          {
+            "timestamp": "2015-08-20 17:26:25,623",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:34266 which had sessionid 0x24f4a631df9000a"
+          },
+          {
+            "timestamp": "2015-08-25 11:14:53,074",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "LearnerHandler-/10.10.34.11:32976:LearnerHandler@395",
+            "message": "Sending DIFF"
+          },
+          {
+            "timestamp": "2015-07-30 14:38:37,500",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:35811"
+          },
+          {
+            "timestamp": "2015-07-30 14:52:35,531",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:37021"
+          },
+          {
+            "timestamp": "2015-07-30 15:13:54,423",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:3:ZooKeeperServer@595",
+            "message": "Established session 0x34ed9ac1c1e0064 with negotiated timeout 10000 for client /10.10.34.11:37111"
+          },
+          {
+            "timestamp": "2015-07-30 15:14:15,378",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.11:37116; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 15:32:23,858",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:37330"
+          },
+          {
+            "timestamp": "2015-07-30 16:18:36,028",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:40581 which had sessionid 0x34ed9ac1c1e0093"
+          },
+          {
+            "timestamp": "2015-07-30 16:36:05,149",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:41160 which had sessionid 0x34ed9ac1c1e00a9"
+          },
+          {
+            "timestamp": "2015-07-30 17:34:50,730",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.11:41732"
+          },
+          {
+            "timestamp": "2015-07-30 17:49:01,419",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:3:ZooKeeperServer@595",
+            "message": "Established session 0x34ed9ac1c1e00d1 with negotiated timeout 10000 for client /10.10.34.11:49255"
+          },
+          {
+            "timestamp": "2015-07-30 19:19:12,507",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.11:50716; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 19:35:00,232",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:3:ZooKeeperServer@595",
+            "message": "Established session 0x34ede65503f0025 with negotiated timeout 10000 for client /10.10.34.11:50961"
+          },
+          {
+            "timestamp": "2015-07-30 19:57:45,009",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:3:ZooKeeperServer@595",
+            "message": "Established session 0x34ede65503f002d with negotiated timeout 20000 for client /10.10.34.11:51041"
+          },
+          {
+            "timestamp": "2015-07-30 19:57:45,045",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.11:51043; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 19:59:02,357",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:51097"
+          },
+          {
+            "timestamp": "2015-07-30 20:06:22,905",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:51097 which had sessionid 0x34ede65503f002f"
+          },
+          {
+            "timestamp": "2015-07-30 20:14:09,840",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.11:51393"
+          },
+          {
+            "timestamp": "2015-07-30 21:01:49,990",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:3:ZooKeeperServer@595",
+            "message": "Established session 0x34ede65503f0058 with negotiated timeout 20000 for client /10.10.34.11:51967"
+          },
+          {
+            "timestamp": "2015-07-31 00:02:53,198",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:3:ZooKeeperServer@595",
+            "message": "Established session 0x34edfaa9c220002 with negotiated timeout 10000 for client /10.10.34.11:53000"
+          },
+          {
+            "timestamp": "2015-07-31 00:15:23,611",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:53310 which had sessionid 0x34edfaa9c220012"
+          },
+          {
+            "timestamp": "2015-07-31 21:24:18,366",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.11:59186 which had sessionid 0x34ee30a5c530018"
+          }
+        ]
+      },
+      "ground_truth": {
+        "severity_counts": {
+          "critical": 7,
+          "normal": 160,
+          "warning": 14
+        },
+        "total_incidents_expected": 21
+      }
+    },
+    {
+      "workflow_id": "wf-2",
+      "source": "zookeeper-host-10.10.34.13",
+      "dag": {
+        "nodes": [
+          {
+            "id": "n1",
+            "task_type": "parse_log_line"
+          },
+          {
+            "id": "n2",
+            "task_type": "classify_severity",
+            "depends_on": [
+              "n1"
+            ]
+          },
+          {
+            "id": "n3",
+            "task_type": "enrich_context",
+            "depends_on": [
+              "n1"
+            ]
+          },
+          {
+            "id": "n4",
+            "task_type": "generate_report",
+            "depends_on": [
+              "n2",
+              "n3"
+            ]
+          }
+        ]
+      },
+      "input_data": {
+        "log_lines": 150,
+        "records": [
+          {
+            "timestamp": "2015-07-29 19:54:13,615",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@832",
+            "message": "Client attempting to renew session 0x24ed93119420016 at /10.10.34.13:37115"
+          },
+          {
+            "timestamp": "2015-07-29 19:54:45,337",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.13:37106 which had sessionid 0x14ed93111f20010"
+          },
+          {
+            "timestamp": "2015-07-29 21:34:45,452",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:1:ZooKeeperServer@595",
+            "message": "Established session 0x14ed93111f20027 with negotiated timeout 10000 for client /10.10.34.13:37177"
+          },
+          {
+            "timestamp": "2015-07-29 21:39:24,986",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.13:37196"
+          },
+          {
+            "timestamp": "2015-07-30 16:44:36,930",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.13:37454; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 17:06:40,816",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:1:ZooKeeperServer@595",
+            "message": "Established session 0x14ed93111f200df with negotiated timeout 10000 for client /10.10.34.13:37467"
+          },
+          {
+            "timestamp": "2015-07-30 19:59:02,538",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.13:38053; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 20:35:02,324",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.13:38079; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 21:03:35,468",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.13:38088 which had sessionid 0x14ede63a5a70048"
+          },
+          {
+            "timestamp": "2015-07-31 11:01:40,975",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.13:54485 which had sessionid 0x14edfaa86f60021"
+          },
+          {
+            "timestamp": "2015-07-31 21:23:10,926",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.13:39525; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-08-21 15:55:04,347",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.13:50545; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-29 19:14:56,371",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.13:57247:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.13:57247 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:15:56,423",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.13:57319:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.13:57319 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:16:26,447",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.13:57354:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:17:36,507",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.13:57438:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:17:56,522",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.13:57458:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.13:57458 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:18:26,565",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.13:57502:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.13:57502 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:20:16,794",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.13:57580:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.13:57580 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:20:46,814",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.13:57617:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:16,835",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.13:57653:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.13:57653 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:54:05,544",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.13:37229; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-29 19:54:05,544",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.13:37229"
+          },
+          {
+            "timestamp": "2015-07-30 14:52:23,211",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.13:37335 which had sessionid 0x24ed93119420065"
+          },
+          {
+            "timestamp": "2015-07-30 17:12:00,363",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.13:37600"
+          },
+          {
+            "timestamp": "2015-07-30 18:18:02,134",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:2:ZooKeeperServer@595",
+            "message": "Established session 0x24ede63a01b000a with negotiated timeout 10000 for client /10.10.34.13:52286"
+          },
+          {
+            "timestamp": "2015-07-30 19:19:12,775",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:2:ZooKeeperServer@595",
+            "message": "Established session 0x24ede63a01b0027 with negotiated timeout 10000 for client /10.10.34.13:52301"
+          },
+          {
+            "timestamp": "2015-07-30 19:35:00,506",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.13:52310"
+          },
+          {
+            "timestamp": "2015-07-31 11:01:41,894",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.13:45817 which had sessionid 0x24edfaa87170022"
+          },
+          {
+            "timestamp": "2015-07-31 15:36:24,570",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "LearnerHandler-/10.10.34.13:59348:LearnerHandler@263",
+            "message": "Follower sid: 3 : info : org.apache.zookeeper.server.quorum.QuorumPeer$QuorumServer@33557fe4"
+          },
+          {
+            "timestamp": "2015-08-10 18:25:52,537",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.13:36187 which had sessionid 0x24f0557806a001b"
+          },
+          {
+            "timestamp": "2015-08-20 17:14:13,880",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.13:42241:Leader@576",
+            "message": "First is 0x0"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:42,709",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44219"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:45,851",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46538"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:52,735",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44256"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:02,551",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46592"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:26,040",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47103"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:26,151",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44377"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:35,982",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46722"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:42,737",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47157"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:46,105",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47180"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:09,396",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46842"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:09,473",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47258"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:19,515",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47300"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:26,298",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44590"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:29,442",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:46914"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:42,873",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47373"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:06,382",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44732"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:29,755",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44813"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:36,245",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47145"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:49,725",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47623"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:53,066",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47635"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:13,018",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47287"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:16,540",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44990"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:26,556",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45020"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:29,812",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47767"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:36,392",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47367"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:36,572",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45053"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:16,412",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47512"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:18,433",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47515"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:18,534",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47931"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:25,214",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:47954"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:38,476",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:47613"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:48,698",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45309"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:51,929",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48047"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:51,929",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48048"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:58,715",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45343"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:12,075",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45392"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:18,758",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45424"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:25,433",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45439"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:54,494",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48218"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:57,837",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48235"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:04,517",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48257"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:04,619",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45532"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:21,118",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48000"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:37,820",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48067"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:38,023",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45644"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:51,288",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48426"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:51,387",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45695"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:01,308",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48457"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:04,546",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48189"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:04,757",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45745"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:17,913",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48254"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:44,636",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48373"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:48,181",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45894"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:51,315",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48394"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:58,000",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48420"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:14,700",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48478"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:21,380",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48502"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:21,482",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48751"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:38,183",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:48811"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:38,295",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:46083"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:48,107",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48602"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:48,310",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:46110"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:54,996",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:46143"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:05,011",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:46170"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:08,148",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:48672"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:51,669",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49076"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:11,814",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:46410"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:25,174",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:46458"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:28,407",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49206"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:31,747",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49218"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:48,442",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49270"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:51,906",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:46563"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:58,378",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49095"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:58,471",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49316"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:18,420",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49183"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:25,102",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49215"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:28,646",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:46694"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:45,140",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49283"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:48,482",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49300"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:05,182",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49361"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:11,864",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49396"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:18,635",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49598"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:31,903",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49480"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:32,107",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:46922"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:38,676",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49670"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:51,956",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49566"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:58,636",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49590"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:02,168",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47032"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:12,075",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49786"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:18,677",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49662"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:22,095",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49822"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:25,550",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47115"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:48,930",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47199"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:58,950",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47234"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:08,857",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:49993"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:12,311",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47282"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:22,134",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49880"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:29,010",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47340"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:29,011",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47342"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:35,499",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49938"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:38,838",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49949"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:42,177",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:49957"
+          },
+          {
+            "timestamp": "2015-07-29 19:37:02,404",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47454"
+          },
+          {
+            "timestamp": "2015-07-29 19:37:02,415",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47464"
+          },
+          {
+            "timestamp": "2015-07-29 19:37:12,435",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:47500"
+          },
+          {
+            "timestamp": "2015-07-29 19:53:54,912",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.13:54265 (no session established for client)"
+          },
+          {
+            "timestamp": "2015-07-29 19:55:01,647",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.13:54294 (no session established for client)"
+          },
+          {
+            "timestamp": "2015-07-29 19:55:02,980",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.13:54298"
+          },
+          {
+            "timestamp": "2015-07-29 19:55:19,655",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.13:54310"
+          },
+          {
+            "timestamp": "2015-07-30 15:13:49,197",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.13:54387"
+          },
+          {
+            "timestamp": "2015-07-30 16:34:25,605",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.13:54616; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 17:22:36,450",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.13:54649"
+          },
+          {
+            "timestamp": "2015-07-30 17:58:23,837",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.13:50180"
+          },
+          {
+            "timestamp": "2015-07-30 19:59:02,549",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.13:50224"
+          },
+          {
+            "timestamp": "2015-07-30 20:36:32,135",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.13:50253"
+          },
+          {
+            "timestamp": "2015-07-31 11:07:41,903",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.13:42060 which had sessionid 0x34edfaa9c22002d"
+          },
+          {
+            "timestamp": "2015-07-31 15:15:17,186",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.13:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:53230"
+          },
+          {
+            "timestamp": "2015-08-10 17:52:39,698",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.13:58180"
+          }
+        ]
+      },
+      "ground_truth": {
+        "severity_counts": {
+          "critical": 3,
+          "normal": 133,
+          "warning": 14
+        },
+        "total_incidents_expected": 17
+      }
+    },
+    {
+      "workflow_id": "wf-3",
+      "source": "zookeeper-host-10.10.34.12",
+      "dag": {
+        "nodes": [
+          {
+            "id": "n1",
+            "task_type": "parse_log_line"
+          },
+          {
+            "id": "n2",
+            "task_type": "classify_severity",
+            "depends_on": [
+              "n1"
+            ]
+          },
+          {
+            "id": "n3",
+            "task_type": "enrich_context",
+            "depends_on": [
+              "n1"
+            ]
+          },
+          {
+            "id": "n4",
+            "task_type": "generate_report",
+            "depends_on": [
+              "n2",
+              "n3"
+            ]
+          }
+        ]
+      },
+      "input_data": {
+        "log_lines": 138,
+        "records": [
+          {
+            "timestamp": "2015-07-29 19:52:09,519",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:45542 which had sessionid 0x14ed93111f20002"
+          },
+          {
+            "timestamp": "2015-07-30 16:18:34,149",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.12:45668"
+          },
+          {
+            "timestamp": "2015-07-30 16:21:28,258",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.12:45675"
+          },
+          {
+            "timestamp": "2015-07-30 16:44:26,593",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:45682 which had sessionid 0x14ed93111f200cd"
+          },
+          {
+            "timestamp": "2015-07-30 17:06:34,257",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:45697 which had sessionid 0x14ed93111f200d6"
+          },
+          {
+            "timestamp": "2015-07-30 17:49:05,943",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.12:45728; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 18:18:01,981",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.12:43125"
+          },
+          {
+            "timestamp": "2015-07-30 23:43:22,414",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.12:35276:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.12:35276 ********"
+          },
+          {
+            "timestamp": "2015-07-31 11:01:54,714",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.12:34568"
+          },
+          {
+            "timestamp": "2015-07-31 21:44:41,270",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:59661 which had sessionid 0x14ee3e057ed0027"
+          },
+          {
+            "timestamp": "2015-08-10 17:52:39,654",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:1:ZooKeeperServer@595",
+            "message": "Established session 0x14f05578bd80002 with negotiated timeout 10000 for client /10.10.34.12:46262"
+          },
+          {
+            "timestamp": "2015-08-10 18:27:49,007",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:46331 which had sessionid 0x14f1724a6e80004"
+          },
+          {
+            "timestamp": "2015-08-20 13:28:51,983",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.12:58349"
+          },
+          {
+            "timestamp": "2015-08-20 17:24:06,873",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.12:58913"
+          },
+          {
+            "timestamp": "2015-08-20 19:33:02,860",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:58917 which had sessionid 0x14f4a6318b80018"
+          },
+          {
+            "timestamp": "2015-07-29 19:14:06,236",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.12:59060:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.12:59060 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:14:46,264",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.12:59103:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.12:59103 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:16:06,336",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.12:59203:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.12:59203 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:16:16,339",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.12:59211:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.12:59211 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:18:56,457",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "LearnerHandler-/10.10.34.12:59406:LearnerHandler@575",
+            "message": "******* GOODBYE /10.10.34.12:59406 ********"
+          },
+          {
+            "timestamp": "2015-07-29 19:20:16,690",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.12:59455:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:20:36,704",
+            "severity_raw": "ERROR",
+            "severity_ground_truth": "critical",
+            "thread": "LearnerHandler-/10.10.34.12:59480:LearnerHandler@562",
+            "message": "Unexpected exception causing shutdown while sock still open"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:31,836",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:54788"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:35,284",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:42624"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:38,625",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:42634"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:45,200",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:54830"
+          },
+          {
+            "timestamp": "2015-07-29 19:21:51,886",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:54857"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:08,703",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:42747"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:25,203",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:58282"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:28,748",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:42813"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:48,794",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:42885"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:55,483",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:42917"
+          },
+          {
+            "timestamp": "2015-07-29 19:22:58,823",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:42926"
+          },
+          {
+            "timestamp": "2015-07-29 19:23:52,166",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:55289"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:02,115",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:58635"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:05,462",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:58652"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:08,871",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:55346"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:25,680",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:43233"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:38,851",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:58764"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:45,532",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:58787"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:55,555",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:58823"
+          },
+          {
+            "timestamp": "2015-07-29 19:24:59,099",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:43358"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:05,591",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:58865"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:05,661",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:55548"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:32,397",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:55648"
+          },
+          {
+            "timestamp": "2015-07-29 19:25:57,870",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:43557"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:11,228",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:43606"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:17,799",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:55803"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:34,606",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:43693"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:44,625",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:43730"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:47,753",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59250"
+          },
+          {
+            "timestamp": "2015-07-29 19:26:51,197",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:55929"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:24,496",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59416"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:27,928",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56057"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:53,657",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59489"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:53,761",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56093"
+          },
+          {
+            "timestamp": "2015-07-29 19:27:53,861",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:43921"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:00,339",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59513"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:10,464",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56154"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:17,144",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56173"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:33,750",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59657"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:40,431",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59688"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:43,772",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59703"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:43,871",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56270"
+          },
+          {
+            "timestamp": "2015-07-29 19:28:57,235",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56322"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:00,478",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59783"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:00,577",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56339"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:17,176",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59852"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:27,199",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59897"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:27,298",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56426"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:40,664",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56483"
+          },
+          {
+            "timestamp": "2015-07-29 19:29:43,899",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59968"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:04,152",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44387"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:10,625",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:60068"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:27,429",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56644"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:50,712",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:60213"
+          },
+          {
+            "timestamp": "2015-07-29 19:30:50,923",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44558"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:07,510",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56786"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:17,534",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56830"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:20,871",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56834"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:47,597",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56935"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:54,276",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:56959"
+          },
+          {
+            "timestamp": "2015-07-29 19:31:57,726",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44795"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:11,086",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44842"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:17,766",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44866"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:21,111",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44879"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:27,585",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:60575"
+          },
+          {
+            "timestamp": "2015-07-29 19:32:51,174",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44989"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:01,078",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:57197"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:31,146",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:57309"
+          },
+          {
+            "timestamp": "2015-07-29 19:33:57,773",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:60936"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:11,226",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:57449"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:11,335",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45275"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:14,680",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45295"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:24,586",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:57495"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:28,035",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45334"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:31,268",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:57523"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:34,517",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:32868"
+          },
+          {
+            "timestamp": "2015-07-29 19:34:48,076",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45406"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:01,238",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:32964"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:14,801",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45509"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:48,007",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:33138"
+          },
+          {
+            "timestamp": "2015-07-29 19:35:54,882",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45651"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:01,368",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:33186"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:14,809",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:57889"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:18,070",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:33246"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:18,151",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:57904"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:18,265",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45738"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:21,410",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:33257"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:28,284",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45770"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:34,771",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:33305"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:34,853",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:57965"
+          },
+          {
+            "timestamp": "2015-07-29 19:36:38,193",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.12:57977"
+          },
+          {
+            "timestamp": "2015-07-29 19:37:11,703",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:45923"
+          },
+          {
+            "timestamp": "2015-07-29 21:34:47,357",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.12:54610"
+          },
+          {
+            "timestamp": "2015-07-29 23:52:07,913",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.12:54643; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-30 15:13:52,745",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:2:ZooKeeperServer@595",
+            "message": "Established session 0x24ed9311942007e with negotiated timeout 10000 for client /10.10.34.12:54673"
+          },
+          {
+            "timestamp": "2015-07-30 17:57:44,121",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:33209"
+          },
+          {
+            "timestamp": "2015-07-31 00:17:49,993",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.12:54126; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-31 00:19:37,087",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.12:54230"
+          },
+          {
+            "timestamp": "2015-07-31 11:01:55,633",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.12:54235"
+          },
+          {
+            "timestamp": "2015-07-31 11:07:42,356",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:54237 which had sessionid 0x24edfaa87170035"
+          },
+          {
+            "timestamp": "2015-07-31 15:31:41,457",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.11:59599"
+          },
+          {
+            "timestamp": "2015-08-10 18:25:25,413",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "/10.10.34.12:3888:QuorumCnxManager$Listener@493",
+            "message": "Received connection request /10.10.34.13:44925"
+          },
+          {
+            "timestamp": "2015-08-20 13:12:40,288",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839",
+            "message": "Client attempting to establish new session at /10.10.34.12:36322"
+          },
+          {
+            "timestamp": "2015-08-20 17:12:45,757",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.12:36358"
+          },
+          {
+            "timestamp": "2015-08-20 17:13:23,515",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:36401 (no session established for client)"
+          },
+          {
+            "timestamp": "2015-08-20 17:26:25,718",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:36890 which had sessionid 0x24f4a631df9000b"
+          },
+          {
+            "timestamp": "2015-07-29 21:01:45,071",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:3:ZooKeeperServer@595",
+            "message": "Established session 0x34ed9ac1c1e0007 with negotiated timeout 10000 for client /10.10.34.12:59224"
+          },
+          {
+            "timestamp": "2015-07-29 21:34:44,640",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.12:59230; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-07-29 21:34:46,432",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.12:59235"
+          },
+          {
+            "timestamp": "2015-07-30 15:13:40,916",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:59284 which had sessionid 0x34ed9ac1c1e0059"
+          },
+          {
+            "timestamp": "2015-07-30 16:21:27,293",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.12:59323"
+          },
+          {
+            "timestamp": "2015-07-30 17:11:56,508",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197",
+            "message": "Accepted socket connection from /10.10.34.12:59359"
+          },
+          {
+            "timestamp": "2015-07-30 19:35:00,326",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "CommitProcessor:3:ZooKeeperServer@595",
+            "message": "Established session 0x34ede65503f0027 with negotiated timeout 10000 for client /10.10.34.12:56359"
+          },
+          {
+            "timestamp": "2015-07-30 20:06:22,989",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:56372 which had sessionid 0x34ede65503f0030"
+          },
+          {
+            "timestamp": "2015-07-30 20:36:32,026",
+            "severity_raw": "WARN",
+            "severity_ground_truth": "warning",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@793",
+            "message": "Connection request from old client /10.10.34.12:56424; will be dropped if server is in r-o mode"
+          },
+          {
+            "timestamp": "2015-08-10 17:53:14,914",
+            "severity_raw": "INFO",
+            "severity_ground_truth": "normal",
+            "thread": "NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001",
+            "message": "Closed socket connection for client /10.10.34.12:33342 which had sessionid 0x34f0557885e0002"
+          }
+        ]
+      },
+      "ground_truth": {
+        "severity_counts": {
+          "critical": 2,
+          "normal": 125,
+          "warning": 11
+        },
+        "total_incidents_expected": 13
+      }
+    }
+  ]
+}

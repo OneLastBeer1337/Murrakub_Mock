@@ -1,403 +1,190 @@
-# Progress Tracker
+# Project Progress & Status Report
 
-Read this file first every session. Update it whenever a milestone's status changes.
-Do not skip ahead based on what "should" be next — only this file's status is authoritative.
+**Project:** Profile-Guided Multi-Workflow Resource Orchestration Platform  
+**Team:** 5 Senior Capstone Engineers (Roles: 035, 075, 077, 083, 089)  
+**Advisor:** Prof. Tossaphol  
+**Target Milestone:** M1 (Proposal Presentation) — **30 September 2026**  
+**Current Branch:** `mickie` (Synchronized with `origin/mickie`)  
+**Test Suite:** **562 passed, 4 skipped, 0 failed** (566 total items, 100% passing)  
 
-## Status legend
-- `not started`
-- `design in progress`
-- `design review pending` — a DESIGN.md exists, waiting on Arno's approval
-- `design approved` — cleared to implement
-- `implementation in progress`
-- `execution review pending` — code exists, waiting on Arno's confirmation
-- `done`
+---
 
-## Milestones
+## 1. Executive Summary & Dashboard
 
-| # | Milestone | Phase | Status | Design doc | Notes |
-|---|-----------|-------|--------|-------------|-------|
-| 1 | Declarative spec + Workflow Orchestrator (Code Gen) | development | done | `/development/DESIGN.md` | Uses mock LLM client + mock Executor Library |
-| 2 | Executor Library (mocked models/tools for Code Gen) | development | done | `/development/executor_lib/DESIGN.md` | Depends on M1's executor interface |
-| 2b | Video Q/A executors + spec (M2 addendum) | development | done | `/development/executor_lib/DESIGN_VIDEO_QA.md` | Un-deferred 2026-09-10. Needs new types, a catalogue module, Listing 2's spec, and a resolution to A18 (existence knobs). Must precede M3 |
-| 3 | Workflow Profiles + Model Profiles | optimization | done | `/optimization/profiles/DESIGN.md` | Profiles **both** workflows. Sourced from paper Tables 4–6, Figs 2–4. Design Q13–Q20 resolved and design approved by Arno 2026-09-11. §14 build order complete: all modules + `critique/` + 9 test files + generated `PROFILES.md`. 350 tests pass; 0 invented values in any `ProfileSet`. **Amended 2026-09-12 during M4:** A73 fixed `derived_tiers`, which was a copy of `baseline` (latency tiers were never derived) |
-| 4 | MILP Optimizer (single-workflow) | optimization | done | `/optimization/milp/DESIGN.md` | Open-source solver (PuLP+CBC), Appendix A.5 formulation. A.5 transcribed verbatim in `/optimization/milp/A5_VERBATIM.md`; Q21 settled, A66/A57/A58 confirmed against source, A72 found. **Design approved by Arno 2026-09-12**; all five decisions Q21–Q25 resolved in DESIGN.md §14. Built in §13 order: 11 modules + 9 test files. **467 tests pass.** Findings: A66 confirmed, A72/A73/A74 new |
-| 5 | MILP Optimizer (multiplexing / μ_m) | optimization | done | `/optimization/milp/DESIGN_MULTIPLEXING.md` | Mkb Opt+Mult — in scope from the start, not deferred. **Q26–Q32 decided by Claude 2026-09-12 on Arno's instruction ('your call, stay close to Murakkab')**; Q30 sharpened — the headline FINDING is `baseline`'s joint infeasibility (A37), with `derived_tiers` numbers always labelled control, never the headline |
-| 6 | Workflow Registry + Auto-Scaler | execution | done | `/execution/DESIGN.md` | Section 3.4 + Table 1 Phase 3. First execution-phase milestone. A87/A90 confirmed verbatim against §4.7; A69 upgraded. Q33–Q42 decided by Claude on Arno's instruction. Built: 13 modules + 3 test files, 551 tests pass. **A87 MEASURED**; A93 found (total_gpus bug in M4/M5, fixed) |
-| 7 | End-to-end single-request run | execution | execution review pending | `/execution/DESIGN_END_TO_END.md` | First point real numbers can be sanity-checked. **SCOPE CORRECTION (A94): Code Gen alone cannot demonstrate the critical-path gap — it is 0.29% there vs 69% on Video Q/A.** Q43–Q53 decided by Claude on Arno's instruction (Q52 overridden to concurrent siblings, citing §4.6). Built: `workflow_run.py` + `critique/observed_path.py` + 18 tests. **570 tests pass. A94 MEASURED on both workflows.** |
-| — | Numerical validation vs. paper (Tables 1–6, Figs 7–14) | — | deferred | — | Explicitly a later phase, not part of M1–M7 |
-| — | OS-log-analysis workflow (custom extension) | — | deferred | — | Own design session after Code Gen is solid |
-| — | Math Q/A workflow | — | deferred | — | Video Q/A un-deferred 2026-09-10 (now M2b); Math Q/A still deferred |
+The Proof-of-Concept (PoC) phase exists to resolve the foundational mathematical, algorithmic, and architectural questions ($T_1, T_2, T_3, T_4$) before full-scale implementation in Semester 2.
 
-## Gaps/improvements found so far
+All planned PoC build steps (Steps 1–10) and prototype modules are **100% implemented, verified, and benchmarked**. With the resolution of findings F20–F22, all four core research questions have reached empirical and theoretical closure ahead of the 30 September deadline.
 
-Keep in sync with entries added to Arno's `architecture-decisions.md` memory file.
+| Dimension | Target | Current Status | Notes |
+|---|---|---|---|
+| **Formulation ($T_0$)** | Modular CFLP + Budget | **Implemented** | Ready for formal ratification on 8 Sep |
+| **Dual Theory ($T_1$)** | Evaluate Lagrangian relaxations | **Closed** | Both $(C_1)$ and $(C_3)$ arms built; bound hierarchy established (F21) |
+| **Heuristics ($T_2$)** | Aggregate coupling resolution | **Closed** | Subset-move consolidation recovers optimum 280 on fixture (F20) |
+| **Budget Sweep ($T_3$)** | Map binding budget region | **Closed** | Extended sweep above $1.0\times B_{\text{ref}}$ clears cliff artifact (F22) |
+| **Trade-offs ($T_4$)** | Track comparison & selection | **Closed** | `C+cons` and `A+subset` dominate plain heuristics; runtime trade bounded |
+| **Literature Graph** | Literature foundation for Ch. 2 | **12 Papers, 30 Concepts** | P1–P12 ingested, validated by automated integrity checkers |
+| **Prototype Layer** | Profiling, Registry, Re-opt | **Completed** | Decayed counting estimator for reliability (F19); scoped re-opt vacuous (F18) |
 
-- **M3** — A62 → added to `murakkab-formulation-narrower-than-system` as instance 5: eq. (5) is
-  unevaluable for Llava-OneVision-7B, the model §4.6's parallelism study runs (no TTFT in either
-  version). Sharpens the HEFT/precedence critique from "A.5 cannot express the overlap" to "A.5
-  could not have screened this configuration at all".
-- **M1** — MILP has no per-executor index: Table 1 and §3.3.1 Decision 2 promise per-DAG-node model
-  assignment, but A.5's `x_{w,s,c,m}` has none. M1's per-node assignments therefore dead-end at M4.
-- **M1** — Tool executors are unrepresentable in A.5 (no model profile, no tokens); Fig 1b's Python
-  interpreter contributes zero cost/energy/latency/capacity. Generalizes the eq (5)/(9) latency gap.
-- **M1** — `c` and `m` are unlinked in A.5: no constraint forces `a_c`/`t_c` and `θ_m`/`ℓ_m`/`e_m`
-  to refer to the same model. Reproduced as-is per the "reproduce literally" policy.
-- **M1** — §4.6 demonstrates DAG-parallel co-scheduling empirically, yet A.5 has no precedence
-  constraint and no makespan term. Strongest evidence for the HEFT critique.
-- **M1** — Code Generation is a total order (no parallel branch), so the precedence gap cannot be
-  demonstrated on it; §4.6's own example needs Video Q/A. Scoping issue, see M5 note below.
-- **Open (pre-M3)** — multiplexing (M5) cannot reproduce Table 2's gain with one workflow; `μ_m`
-  is undefined in the paper; all M4 numbers rest on mocked profiles. Decide before M3 starts.
-  *Status after M3's design:* the second workflow exists (M2b); `μ_m` stays undefined and out of
-  M3 by A42, still M5's problem; the mocked-profile threat is answered by provenance enforcement
-  plus swappable `ProfileSet`s and a seeded Monte-Carlo sweep (§9), not eliminated.
-- **M2** — the paper's knob taxonomy contradicts itself (A12): §2.5 p.570 calls frame count an
-  *agent-level* knob; §3.3.1 p.574 lists frames/STT/debaters/rounds together as the *workflow
-  configuration*. Same knob, two levels, in a three-level taxonomy the paper presents as a finding.
-- **M2** — A.5 has no CPU resource type at all (A13): `G`, `B_g`, `c_g` and constraint (7) are
-  GPU-only, so the `cores` knob §3.2 exposes can never reach the MILP — yet §4.6 Figs 12b/12c
-  *evaluate* CPU offload and report it meeting the latency SLO while cutting GPU usage.
-- **M2** — A14: `llm_debate_testers` gives one Code Gen workflow two independent `(D,R)` pairs,
-  while Table 6 has exactly one `Agents` and one `Rounds` column. Either testers don't debate
-  (M1's A2) or Table 6 under-reports. Pinned by an executable test; **resolved at M3 by A45** — the
-  column is `D`.
-- **M2** — A18: on/off "existence" knobs (`stt_enabled`, §3.3.1) have no owner in the `ExecutorSpec`
-  model — knobs attach to nodes, but this knob decides whether a node exists. Blocking for Video Q/A.
-- **PATTERN (M1+M2)** — §4.6's evaluation systematically exercises capabilities Appendix A.5 cannot
-  express: parallel co-scheduling with full overlap (no precedence/makespan term), CPU/GPU placement
-  (no CPU resource type), and Tool execution (formulation is token-denominated throughout). The
-  optimizer's formulation is narrower than the system the authors demonstrate. Strongest single
-  framing for the senior-project comparison.
-- **M2b** — A18/A24: **the paper cannot express its own knob.** §3.3.1 p.574 names STT on/off as a
-  workflow-level decision and Fig 2a plots it, but §3.2 p.572 attaches knobs to models/tools and
-  `stt_enabled=False` deletes a node — no executor can own the knob that annihilates it. Resolved by
-  Option 5 (a configuration IS a DAG variant). Extends the PATTERN above from the MILP layer to the
-  specification layer. Corroboration: Table 5's `STT` column is `Y` in every reported row (A28).
-- **M2b** — A22: the paper describes Video Q/A three incompatible ways — Fig 1a + §2.2 (5 agents,
-  incl. Object Detector), Listing 1 (5 nodes, `scenes, audio = …`), Listing 2 (4 sub-tasks, no object
-  detection). Listing 2 taken as canonical; object detection folded into `frame_extract`.
-- **M2b** — A25: Whisper/OmDet/CLIP are `TOOL` per §3.2, hence invisible to A.5 — yet §4.1 provisions
-  them on GPUs and §4.6 offloads them to CPUs. A31: §3.3.1 Decision 2 promises "model **or tool** for
-  each executor" per epoch, but tool identity is fixed at Phase 1 and A.5 has no tool variable.
-- **M2b** — **Mock-selector bias, affects M7 credibility.** `MockLLMClient.keyword` scores overlap ÷
-  candidate description length, so longer, more discriminating descriptions lose. It picks the
-  invented `fixed_interval_segmenter` over the paper's `opencv_scene_detector` (7th), and nothing
-  catches it — both type-check identically. Contrast its cross-workflow `q_a` error, which the type
-  check does catch. Any M7 end-to-end number is driven by this selector over a half-invented
-  catalogue. Fix is a real LLM client, not description tuning.
-- **M3 OBLIGATION (from Q6/Option 5)** — `C_w` enumeration must prune the `stt` node. The paper
-  describes no such step; label it as ours, not as reproduction. Also disclose that §3.2 says the
-  orchestrator produces *a* logical workflow, singular, while M3 derives a second.
-  *Discharged in M3's design as A50; `prune_stt()` is labelled `[OURS]`.*
-- **M3** — A37: **the paper's printed latency SLO tiers are unreachable under its own eq. (5).**
-  Table 5's `Best` row (Llava-OneVision-7B, F=1, H100, TP=4, TPOT 0.0044 s) against Figure 7b's
-  printed `Best ≤0.5 s` needs `t_c ≲ 68` tokens; Figure 2b puts Video Q/A at 250-1000. Even at
-  TTFT = 0 and the token floor the tier is missed (1.1 s). Code Gen shows the same ≈2× gap
-  (11.3 s printed vs ≈20 s computed), and Figure 4a's leftmost plotted latency is ≈1.0 s, never 0.5.
-  Not repaired: printed labels remain `baseline` (Q14), so M4's latency runs are *expected* to
-  reject the configuration Table 5 says Murakkab chose.
-- **M3** — A37b: **new PATTERN instance, and the cleanest.** Tables 5/6 report the same
-  `(model, GPU, TP)` at 2-3 different `(TPOT, TPS)` operating points across SLO tiers, and A.2
-  says so explicitly — but `θ_m` and `ℓ^TPOT_m` are constants of `m` in A.5. Two of the paper's own
-  tables against its own appendix. Moves `n_m` by up to 4×. Resolved Q20: `M` is *not* re-indexed;
-  one operating point per `m`, ties broken toward higher `θ_m` so any reported gap is a lower bound.
-- **M3** — ~~A38~~ **WITHDRAWN 2026-09-12, replaced by a stronger result.** The §3.4 tier rule
-  reproduces the printed tiers on **both** workflows — 8/8 values inside the ±0.5 pp digitization
-  band (Code Gen +0.21/+0.33/+0.22/+0.27; Video +0.29/+0.30/−0.03/−0.08) — once the percentile is
-  taken as `lower` (the largest profiled value at or below the position) rather than interpolated.
-  That convention is forced by §3.4's own words, "values **available among the set of** all
-  configurations": an interpolated tier is one no configuration achieves. The original claim (that
-  a TP-feasibility-weighted population was required) was an artifact of interpolation in our
-  reconstruction. Three corroborations fall out: the expansion is a no-op under uniform coverage;
-  NVLM-D-72B's Figure 4b readings are **required** (without them `basic` misses by +10.04);
-  and admitting DeepSeek-Llama-70B **breaks** two tiers, independently confirming Q13 and A54.
-  Pinned by `tests/test_slo_tiers.py` (10 tests).
-- **M3** — A53: **Phi-4 has four Figure 3 (GPU,TP) tuples, not eight** — the panel plots only
-  diamonds (TP=1) and triangles (TP=2), verified at 22×, corroborated by every Phi-4 row in Table 6.
-  Corrects DESIGN.md §6.1. **Load-bearing:** under the design's erroneous ×8 weighting the tier
-  reconstruction fails (`basic` −2.87 pp).
-- **M3** — A54/A55: **10 of 44 `a_c` values are Unavailable.** Figure 4b plots exactly ONE
-  DeepSeek-Llama-70B marker (not 4×8), and Llama-3.2-90B is separable at only three levels in
-  Figure 4a with STT hatching below resolution. Contradicts DESIGN.md §3.2's "every one of the 20
-  has an accuracy source".
-- **M3** — A56: the Figure 2b **tail** disagrees with §3.4's prose (p99 ≈1400 read vs 1200 stated,
-  +17%, while p50 matches to −2.5%). No affine rescale fixes both, and `t_c`'s p90 lives in that tail.
-- **M3** — A57: **`c_g` is per GPU, not per instance**, despite A.5 naming it "Cost per instance per
-  second" — eqs. (6) and (12) both multiply it by `g_m`, as eq. (11) does to `e_m`. Same defect in
-  `B_g` ("available resource *instances*" vs eq. (7)'s `Σ n_m·g_m ≤ B_g`, GPUs).
-- **M3** — A58: **A.5 states four constraints twice** — eq. (4)≡(8), eq. (5)≡(9) verbatim, and
-  eq. (6)≡(10) up to inlining `Cost_budget`. Its 13 numbered equations are 10 distinct ones.
-- **M4** — A66 **CONFIRMED verbatim (Q21 settled, 2026-09-12): A.5's SLO filters constrain
-  `x^peak` ONLY.** `x^avg` appears in exactly three places — eq. (2), eq. (6)/(10) and objective
-  (13) — and **none is an SLO filter**. So: (i) objective (13) maximises `Σ x^avg·a_c` with nothing
-  stopping it selecting configurations whose `a_c` is *below* `τ_{w,s}` — the one objective that
-  optimises quality is the one the quality filter cannot reach; (ii) the cost budget charges
-  possibly-SLO-violating average load; (iii) no constraint ties `x^avg` to `x^peak`, so a solution
-  may serve peak on a compliant configuration and average on a cheaper non-compliant one. Also
-  settled: `α` scopes both (1) and (2); eq. (3) has **no** average twin, so `n_m` is provisioned
-  from peak alone; eq. (13)'s superscript is `avg`. Transcription in
-  `/optimization/milp/A5_VERBATIM.md`. **A57 and A58 also confirmed exactly** against the source.
-- **CORRECTION (2026-09-13, verified against the PDF) — A68's CONSEQUENCE WAS WRONG.** I wrote
-  that "a latency-tier run has no quality floor whatsoever". §4.3 (p.577) says the opposite,
-  verbatim: **"We guarantee a basic accuracy tier even for latency SLO requests (e.g., 50% for
-  video Q/A)."** What survives is the FORMULATION claim: A.5 gives one `τ_{w,s}` per pair and
-  scopes eq. (4) to `s = max_accuracy`, so it cannot express two simultaneous floors. What is
-  wrong is describing that as Murakkab's behaviour — the evaluation applies a floor the
-  formulation cannot state. Another PATTERN instance (§4.x exercises what A.5 cannot express),
-  and our M4/M6 code is faithful to A.5 but NOT to §4.3's described system. Also note the printed
-  Figure 7a `basic` label is 54.9%, while §4.3 says "e.g., 50%" — a third small discrepancy.
-- **CORRECTION (2026-09-13) — §4.6's "near-perfect parallel" is about TWO WORKFLOWS, not Video
-  Q/A's internal branch.** §4.6 opens: *"the orchestrator constructs a DAG with a fan-out for the
-  two sub-tasks that can execute in parallel: (1) video Q/A ... and (2) code generation"*. So
-  "the two sub-tasks" are the two composed WORKFLOWS in a dynamic request, not `frame_extract`
-  and `stt`. I cited it repeatedly as evidence for the intra-Video-Q/A overlap, including when
-  overriding Q52 at M7. The intra-workflow fan-out is still REAL — Listing 2 has `frame_extract`
-  and `stt` both consuming `scenes` and both feeding `q_a`, and Figure 12's Gantt shows them as
-  separate rows — but the "full overlap in execution" sentence is not about them. Q52's outcome
-  (concurrent siblings) still stands on Listing 2's structure; its stated justification was wrong.
-- **M7** — A94 **MEASURED end to end, on both workflows.** One request walked through all three
-  phases, per-node timings recorded, set beside eq. (5):
-  **Code Generation** (DSQ-32B/H100/TP=4, D=4 R=4, `t_c`=39,969): eq. (5) = 1547.02 s, observed
-  walk = 1550.69 s → blind spot **0.24%**, 1 free stage, 18 LLM invocations charged one prefill.
-  **Video Q/A** (NVLM-D-72B/H100/TP=8, STT on, `t_c`=194): eq. (5) = 2.74 s, observed = 8.74 s →
-  blind spot **69%**, 3 free stages. Survives the ±3× invented-tool band (42%–87%), so it rests on
-  structure not magnitudes. The parallel branch reproduces §4.6's measured overlap: `frame_extract`
-  2→3 s and `stt` 2→6 s run concurrently, `q_a` starts at 6 s (the max) not 7 s (the sum), saving
-  1.0 s. **The HEFT/precedence critique is now a measurement rather than a structural argument.**
-- **M7** — **Q52 overridden to CONCURRENT siblings.** The design recommended serial as "deliberate
-  pessimism"; §4.6 (p.578) *measures* "near-perfect parallel, with full overlap in execution", and
-  M3's `critical_path.py` already computes `max(L_frames, L_stt)`. Serial would have contradicted
-  the paper's own measurement and disagreed with the critique module the trace feeds.
-- **M7** — **the DAG prohibition is NARROWED, not broken.** M4/M5/M6 may not read a DAG at all;
-  M7's `workflow_run.py` must, because a workflow cannot execute without respecting data flow. The
-  line: *walking* for data-flow correctness is permitted in exactly one module; *scheduling* by the
-  DAG for resource allocation stays forbidden everywhere. Enforced by four tests — the `(c,m)` pair
-  is fixed before the walk, ties break on declaration order not duration, no critical-path/EFT
-  identifier exists in the walker, and exactly one module imports `shared.workflow`.
-- **M7 (design)** — A94 **: eq. (5)'s blind spot is 0.29% on Code Generation and ~69% on Video
-  Q/A — so M7's stated target workflow is the worst possible choice for the HEFT critique.**
-  Measured: DeepSeek-Qwen-32B/H100/TP=4 at D=4,R=4 has `t_c` = 39,969 tokens, so eq. (5) reads
-  **1,547 s** and the TPOT term swamps everything — the one tool stage (0.8 s) plus 17 unbilled
-  prefills (3.7 s) come to **0.29%** of true latency. On Video Q/A the same arithmetic inverts:
-  `t_c` = 194 tokens gives eq. (5) = 2.74 s against ~6 s of tool stages, so **eq. (5) misses ~69%**
-  of end-to-end latency. The conclusion survives the full ±3× invented-tool band (42%–87%), so it
-  rests on the STRUCTURE — small `t_c`, three tool stages — not on the invented magnitudes.
-  **Consequence:** Code Gen can sanity-check the pipeline (M7's stated purpose) but cannot produce
-  a meaningful critical-path number; Video Q/A must carry that arm. Same reasoning as Q25 at M4.
-- **M7 (design)** — A96 **corrected: the TTFT undercount is real but numerically trivial.** eq. (5)
-  charges ONE prefill; a `D=4,R=4` request makes ~18 LLM invocations and pays ~18. The structural
-  point stands and costs nothing to state — `(invocations − 1) · l^TTFT_m`, integers times a
-  profiled value, zero invented magnitudes. But it is **0.2%–2.6%** of eq. (5) across every Code
-  Gen profile, precisely because `t_c` is enormous. The design doc calls it "the strongest
-  defensible result in the milestone"; it is not, and should not be presented that way.
-- **M6** — A93 **(bug in M4/M5, found by M6, fixed): `MilpResult.total_gpus` returned INSTANCE
-  counts, not GPUs.** It was `sum(n_m)`, but A.5 multiplies by `g_m` everywhere (eqs. 6, 7, 11,
-  12) and TP degrees here range 1–8 — one NVLM-D-72B/TP=8 instance is 8 GPUs, not 1. Found when
-  M6's fleet reported 328 GPUs where the MILP said 41. **A80 was recomputed and survives intact:**
-  structural sharing still exactly **0.00%**, μ contribution 22.01% (was 22.14% on instance
-  counts), separate/joint/joint+mult now 418 / 418 / 326 GPUs. `total_instances` added as the
-  honestly-named accessor. `g_m == ModelProfileKey.tp` is test-enforced, so the fix needed no new
-  plumbing.
-- **M6** — A87 **MEASURED, not just confirmed.** Same plan, same load, same thresholds; only the
-  provisioning delay changes. A 2.5× spike lasting 200 s (shorter than the 20-minute delay, which
-  is the normal case for Figure 19's traces):
-  **with the paper's own 20-min provisioning → 81.5% SLO violations**; with instant provisioning →
-  36.5%. The auto-scaler *does* react (7 scale-out events, 49 instances requested and granted) but
-  the capacity arrives long after the spike has passed, burning **141,680 wasted GPU-seconds** for
-  no benefit. So during any spike shorter than 20 minutes the auto-scaler is **worse than
-  useless** — it pays for capacity that is never used. Section 3.4's "rapidly scales out" is not
-  achievable under Section 4.7's own assumption.
-- **M6** — **queueing dominates token variance as a violation cause.** In the same run, 12,451
-  violations were attributable to queueing versus 1,119 to token variance. eq. (5) admits a pair
-  on `l^TTFT + t_c·l^TPOT ≤ τ` with **no queueing term at all**, so the dominant failure mode is
-  latency the optimizer structurally cannot model — a runtime confirmation of the capacity-model
-  critique, measured rather than argued.
-- **M6 (design)** — A87 **CONFIRMED verbatim: the auto-scaler cannot do what §3.4 claims.** §3.4
-  says it "monitors per-model instance load over short windows (**seconds to minutes**) and
-  **rapidly scales out** when needed". §4.7 says "Provisioning new instances (i.e., VM allocation,
-  software setup, and model transfer to GPUs) is assumed to take **20 minutes** [31, 38, 62]."
-  A 20-minute cold start cannot answer a 60-second window. The only reconciliation is pre-warmed
-  spare capacity — §3.4 says Murakkab "maintains spare resources" but **never sizes them** (A88),
-  and A.5 has no parameter for spare (`B_g` is a hard budget, `α` is a demand buffer). So the
-  auto-scaler's entire responsiveness claim rests on an undefined quantity.
-- **M6 (design)** — A90: **`α` denotes two different things.** A.5 p.586: "α: Unified buffer factor
-  (default 1.15)". §4.7: "an exponentially weighted moving average (EWMA), with **α = 0.5**, to
-  predict workload demand". The auto-scaler needs both at once. Notational collision, not a
-  contradiction — but it will silently corrupt any implementation that reuses one symbol.
-- **M6 (design)** — **A69 UPGRADED from "A.5 has no inter-epoch coupling" to a PATTERN instance.**
-  §4.7 identifies a whole cost regime dominated by exactly the thing A.5 cannot express: "Zone 1
-  (10–60 minutes): Buffer-dominated. Frequent reoptimization induces high transition overhead.
-  Excessive GPU provisioning during transitions leads to lower utilization... Frequent model and
-  tool changes can also reduce KV cache efficiency." The paper **measures** transition overhead
-  and builds a sensitivity analysis on it, while A.5 has no switching-cost, warm-start or
-  instance-lifetime term whatsoever. Same shape as the parallelism, CPU-placement and tool gaps.
-- **M6 (design)** — good news: **the load projector is paper-sourced, not invented.** §4.7 gives
-  EWMA with α = 0.5. It lives in evaluation rather than design, but M6 can reproduce projection
-  faithfully instead of inventing a predictor.
-- **A80 RE-VERIFIED (2026-09-13) against §4.1's own definitions.** §4.1: "Mkb Opt optimizes **each
-  workflow–SLO combination**"; "Mkb Opt+Mult **jointly** optimizes requests **across all**
-  workflow–SLO combinations". My original separate arm kept both SLOs together, which was more
-  joint than the paper's. Re-measured with four fully separate solves: **418 GPUs separate → 418
-  joint at μ=1 → still exactly +0.00% sharing gain**; 326 with μ=0.784 (22.01%). A80 survives the
-  correction. Table 2 also verified cell-by-cell: 1164→912 GPUs = 21.6%, 27.7→22.1 MWh = 20.2%,
-  57.2→47.2k$ = 17.5%. This also settles Q26, which the design refused to pick: Table 2's
-  "Murakkab Opt" IS the separate arm, by §4.1's own wording.
-- **M5** — A80 **(MEASURED — the milestone's strongest result): A.5's structure produces ZERO
-  multiplexing gain; the entire 21.6% enters through `μ`.** Three arms on `derived_tiers`,
-  §4.3 setup, objective (11): separate-and-summed = **131 GPUs**; joint with `μ=1` (sharing `n_m`
-  across both workflows) = **131 GPUs**, a gain of **+0.00%**; joint with `μ=0.784` = **102 GPUs**,
-  −22.14%. And the zero is not vacuous — Phi-4/H100/TP=1 genuinely carries load from *both*
-  workflows (n=89). The reason is structural: eq. (3) is linear in `x` and `n`, so pooling demand
-  saves only `ceil((d1+d2)/θ)` vs `ceil(d1/θ)+ceil(d2/θ)` — at most one instance per shared model.
-  **Table 2's headline is therefore not a property of the formulation but the value of a
-  coefficient the paper never defines**, and which we could only obtain by fitting it to that same
-  21.6% (calibration spent, A63's circularity in new clothes). Confirms §4.5's prediction, which
-  said <1%; measured 0.00%.
-- **M5** — A78: **`μ_m` is a parameter of the wrong object.** Multiplexing gain depends on how many
-  independent streams share an instance and how bursty they are — properties of the *assignment*,
-  not the model. A.5 makes it a parameter of `m` alone, so the gain is exogenous. Worse,
-  `μ_m·Σ(...) ≤ n_m·θ_m` is algebraically identical to `Σ(...) ≤ n_m·(θ_m/μ_m)`: **scaling `μ` is
-  indistinguishable from scaling `θ_m`.** Multiplexing, in A.5, is a throughput bonus under another
-  name. Demonstrated by test (μ=0.5 halves the fleet exactly as doubling θ would).
-- **M5** — A77: the three reported reductions (21.6 / 20.2 / 17.4) are **mutually inconsistent with
-  any single uniform `μ`**. One aggregate number also under-determines 20 per-model unknowns by 17,
-  so per-model `μ` is INVENTED and quarantined to `critique/` like Q16's tool times.
-- **M5** — A76: **objective (13) averages incommensurable accuracies across workflows.** `a_c` is
-  HumanEval pass@1 for Code Generation and VideoMME for Video Q/A; eq. (13) adds them and divides
-  by total requests, so the optimizer trades quality across workflows at a meaningless exchange
-  rate. Harmless at `|W|=1`; live in §4.3's own experiment.
-- **M5** — A75: **M4's "one-line seam" claim held only half.** The `μ` scalar was a one-line change
-  to `_capacity_lhs()`; the *mechanism* was not — M4 keyed `x` as `(c,m)`, eliding A.5's `w` and
-  `s`, and emitted eqs. (1)/(2) as scalars rather than families. Restoring the full four-index form
-  needed a new module. The failure mirrors the paper: **A.5 names the coefficient and never names
-  the mechanism.**
-- **M5** — **Q30 decided: the headline stays `baseline`.** §4.3's own experiment is
-  **structurally infeasible on the paper's own printed SLO tiers** — its 30% low-latency share hits
-  A37, and eq. (1)'s `for all` takes Code Generation down with Video Q/A even though Code Gen alone
-  is feasible. That infeasibility IS the headline finding. `derived_tiers` runs the three arms as a
-  clearly-labelled control and never as the paper's numbers.
-- **M5 (design)** — A79 **(bug in the A73 fix, found while verifying M5's design, fixed):
-  derived latency tiers were POOLED across workflows.** `_latency_population()` ignored the
-  `workflow` argument its caller was looping over, so `derived_tiers` assigned Video Q/A and Code
-  Generation the identical 2.938 s threshold — simultaneously too loose for one and impossible for
-  the other. Figures 7b/8b print visibly different ladders (0.5–5.8 s vs 11.3–78.2 s), so a shared
-  tier is wrong on its face. **Consequence before the fix:** the §4.3 joint experiment — M5's own
-  headline setup — was unrunnable on the latency arm under *either* profile set. After the fix both
-  workflows are feasible under `derived_tiers` (τ = 2.738 s / 74.368 s). Accuracy tiers were always
-  per-workflow; only latency was pooled.
-- **M4** — A74 **(headline result): A51 is EXPLOITED, not latent — 100% of allocated mass.** Under
-  `baseline`, video_qa/accuracy-best, the optimizer routes **all** load from a Gemma-3-27B
-  configuration onto **Phi-4** model profiles. And it is worse than an accuracy mismatch: Phi-4
-  appears in **no Video Q/A configuration at all** — it is a Code Generation model. A.5's `M` is
-  global and no constraint ties it to the workflow's own `C_w`, so the formulation permits serving
-  a video workflow on a text-only LLM while claiming the video model's accuracy. Measured by
-  `milp/critique/incoherence.py`, which the MILP cannot import (test-enforced).
-- **M4** — A73 **(M3 defect found by M4, fixed): `derived_tiers` was a byte-for-byte copy of
-  `baseline`.** `_slo_thresholds()` read `use_printed_latency` and then wrote the printed Figure
-  7b label unconditionally; `derive_latency_tiers()` existed in `slo_tiers.py` and was never
-  called. So DESIGN §7.4's control — "same code, same data, different `tau`" — **did not exist**,
-  and every A37 claim rested on an unchecked assumption. Now derives latency tiers from the set's
-  own eq. (5) population over coherent `(c,m)` pairs. Result: derived `best` = 2.551 s vs printed
-  0.5 s, and latency/`best` is feasible under `derived_tiers` while infeasible under `baseline` —
-  a 5.1× ratio, inside the 2–5× A37 predicted, which **corroborates our code rather than indicting
-  it**.
-- **M4** — implementation note: a **factor-60 arrival-rate bug** was caught by the §3.4 units
-  guard. `sets.demand()` re-applied Figure 19's req/min→req/s conversion that M3's `arrivals.py`
-  had already done, producing 1–2 GPUs instead of ~68 — a plausible small integer that nothing
-  else would have flagged. `_as_req_per_second()` now reads the unit tag and refuses to guess.
-- **M4** — A72: **A.5's cost CONSTRAINT and cost OBJECTIVE measure different things.** Eq. (6)/(10)
-  charges `x^avg·(t_c/θ_m)·g_m·c_g` — GPU-seconds of *work consumed*. Objective (12) minimises
-  `n_m·g_m·c_g` — the *fleet provisioned*, busy or idle. Nothing ties them together, so a solution
-  can sit far under the consumption budget while provisioning an arbitrarily expensive fleet: idle
-  capacity costs nothing in (6) and everything in (12). Compounded by A66 (`x^avg` is unfiltered and
-  never drives `n_m`), the cost budget constrains a quantity that is nearly free to satisfy. Caught
-  by checking M4's DESIGN.md against the verbatim source — the doc had written eq. (6) over `n_m`,
-  i.e. objective (12)'s expression; corrected.
-- **M4** — A67 **refined:** `Cost_budget` IS defined (`Σ_w τ_{w,cost}·Σ_s λ^avg_{w,s}`), but depends
-  on **`τ_{w,cost}`** — a cost-type SLO threshold that §3.4 never defines (it gives four tiers for
-  quality and latency only) and no table reports. Objective (13) and eqs. (6)/(10) remain
-  uninstantiable from paper data; the blocker is one level deeper than first identified.
-  `Cost_total` in (13) is also never defined.
-- **M3** — A65 **(flow audit, fixed): `to_milp_inputs()` under-reported the data-excluded set.**
-  It listed only configuration-side gaps (`t_c`, `a_c`, `theta_m`), so the **7 model profiles with
-  no TTFT were invisible** — including Llava-OneVision-7B (A62). M4 would have applied eq. (5) to
-  them and met an `Unavailable` mid-constraint. Now covers `l^TTFT_m`, `l^TPOT_m` and `e_m` too;
-  the register went from 14 to 21 entries.
-- **M3** — A64 **: two of DESIGN.md §9.2's seven named profile sets do not exist.** `maxthroughput`
-  is deliberate — A37b put the operating-point collapse at the `to_milp_inputs()` boundary, so
-  it's reachable as `operating_point=MAX_THROUGHPUT` and making it a set too would give one knob
-  two homes. **`wide` needs Arno's decision:** §9.2 defines it as "baseline + the 14 extrapolated
-  `t_c` of §5.4 with ±8× bands", but **Q19 superseded §5.4** — those 14 are `Unavailable` precisely
-  so nothing is extrapolated. `profile_sets.py` separately claimed it enabled the aliased
-  DeepSeek-Llama-70B profile (Q13/A34), a different thing. Neither is implemented and the
-  `ASSUMED_ALIAS` provenance level is unused. Docstring corrected to state reality; a test pins
-  the five that exist.
-- **M3** — A63 **: DESIGN.md §5.2's `PAPER_FIGURE_LABEL` promotion would make two validations
-  circular — NOT implemented, pending Arno's decision.** §5.2 proposes promoting four Code Gen
-  `a_c` values to the *printed tier label values* (91.4 / 88.9 / 87.1 / 75.5) on the grounds that
-  "the label prints the number the bar approximates". But §7.3's tier reconstruction *derives*
-  those same labels from the `a_c` population. Feeding labels in makes the reconstruction
-  self-fulfilling — `best` would go to residual 0.00 pp by construction — and the §5.2 check would
-  compare four numbers against themselves. The two strongest validations in M3 would both become
-  vacuous while still passing. Kept at `PAPER_FIGURE_READ`; `test_profile_contradiction.py`
-  asserts no `a_c` carries `PAPER_FIGURE_LABEL`. **Second problem with §5.2 as written:** the tier
-  label is a *threshold* (a population percentile, §3.4) while Table 6 names the configuration
-  *chosen* there, which must CLEAR the threshold, not equal it. Equality only holds at `best`,
-  where the threshold is the population max. Confirmed empirically — all four residuals are
-  positive (+0.21, +0.33, +0.82, +0.27 pp), never negative.
-- **M3** — A62: **eq. (5) is unevaluable for Llava-OneVision-7B** — the model §4.6 runs for its
-  parallelism study (Figure 12a). No Figure 3 panel exists for it (A35) and no table in either
-  version reports its TTFT (A36), so `l^TTFT_m` is `Unavailable` and the latency filter cannot be
-  applied to it at all. A35/A36 recorded the missing data; this records the *consequence*: the
-  paper demonstrates co-scheduling on a model its own optimizer could not admit under a latency
-  SLO. Surfaced by `test_critical_path.py`, which had to stop naming that model and pick whichever
-  pair the data supports.
-- **M3** — A60: **two digitized CDF series came back non-monotone** — Figure 2d Gemma-3-27B D=2
-  (p90 2069 > p95 2038) and Figure 2b Llava-OneVision-7B F=10 (p95 1271 > p99 1198). These are
-  digitization artifacts, not findings: a percentile function is non-decreasing *by definition* of
-  the CDF being plotted. Corrected by a running maximum on the point estimate only, clipped into
-  each percentile's own band (inversions were 1.5% and 5.7%, both far inside the bands); the note
-  on every moved value records its original. Caught by `test_token_distributions.py`, not by eye.
-- **M3** — A61: **token count is NOT monotone in `F` for NVLM-D-72B**, and Figure 2b does not claim
-  it is — its F=1 band [188, 199] and F=5 band [163, 195] overlap, which is why the model is
-  recorded `inseparable`. Answer length is driven by the question, not the frame count. The test
-  asserts monotonicity only across frame counts the figure actually separates; a blanket
-  monotonicity assumption would have been a claim the source does not support.
-- **M3** — A59 **corrects DESIGN.md §12.1**: that section's table lists `node_tokens` as `DERIVED`
-  for both workflows ("code gen: split across debate/tests/rank"). **No such split is published.**
-  Figure 2d's CDFs are per *request*, totalling every LLM call in the configuration, and Code
-  Generation has three LLM nodes (`propose_solutions`, `write_tests`, `rank_solutions`) with no
-  reported apportionment — any ratio would be INVENTED, which Q19 forbids outside `critique/`. Only
-  Video Q/A decomposes exactly, and only because three of its four nodes are tools: the zeros are
-  `DERIVED` and the remainder lands wholly on `q_a`, so `sum(node p90) == total p90` with no
-  invented ratio. Code Gen's three LLM nodes are `Unavailable`. **Consequence:** the §12.1
-  makespan-vs-eq.(5) comparison is structural on Video Q/A (as planned) and *not computable at all*
-  on Code Generation — which is the milder loss, since Code Gen is a total order with no parallel
-  branch. `rank_solutions` compounds it: it may be served by the `test_pass_rate_ranker` TOOL (zero
-  tokens) or an LLM Ranker, and `C_w`'s knobs do not determine which (§12.3, point 5).
-- **M3** — A45 **resolves M2's A14**: [OSDI] Table 6's column is `Agents`, [ARXIV] Table 5's is
-  `Debaters`. The column is `D` — one `(D,R)` pair per Code Gen configuration, and
-  `llm_debate_testers` is not representable in `C_w`. Closed by evidence, not judgement.
-- **M3** — A46: the "90th percentile token generation load" sentence exists **only** in [OSDI]
-  (p.576), with no arXiv counterpart. The `t_c = p90` rule shapes every capacity number in the
-  reproduction and rests on one sentence in one version.
-- **M3** — **all M4 resource numbers will be lower bounds, unequally.** 11 of 26 executors are
-  tools with no profile (A25/A31), and the workflows are not affected equally — Video Q/A has three
-  tool stages, Code Generation one. Any cross-workflow comparison inherits that skew and must say so.
-- **M3** — A39/A40/A41: prompt tokens have no A.5 parameter and no data for either workflow; `c_g`
-  is reported nowhere and Table 2 implies two different values for one cluster; Figure 3's
-  "TPS per Wh" is dimensionally undefined, so `e_m` comes from Table 3 per GPU *type* and objective
-  (11) cannot distinguish two models on the same GPU.
-- **M3** — provenance outcome: of ~230 MILP-facing values, **0% invented**, ~14% `Unavailable`
-  (accepted, Q19) — M4 must print the data-excluded set beside every headline number. The only
-  invented values in the milestone are seven tool service times, quarantined from `to_milp_inputs()`
-  by test (Q16), and the Video Q/A critical-path comparison is therefore **structural, not numeric**.
+---
 
-## Session resumption note
+## 2. Research Questions Status ($T_1 - T_4$)
 
-If you are starting a new session or continuing after a context/usage-limit reset:
-1. Re-read `CLAUDE.md` and this file.
-2. Find the first row above that is not `done`.
-3. If its status is `design review pending` or `execution review pending`, do not proceed —
-   surface that to Arno and wait, even if a long time has passed.
-4. Otherwise, resume exactly at that row's status per the Milestone process in `CLAUDE.md`.
+### $T_1$ — Does Lagrangian relaxation decompose, and along what axis?
+- **Status:** **FULLY RESOLVED (Findings F7, F12, F21)**
+- **Outcome:**
+  - **Relaxing $(C_1)$ (Track B, `track_b_lagr.py`):** Decomposes **per profile** into 0/1 knapsack subproblems. Delivers a strictly superior dual bound — tighter on **30 of 30** instances, paired difference **12.57 pp [9.49, 15.64]** — but requires discrete dynamic programming runtime (~0.6–0.9s). (**"3× to 5× tighter" was a ratio of means and is withdrawn (F30);** the effect holds, the ratio was inflated. Median per-instance ratio **2.53×** uniform, **2.00×** structured.)
+  - **Relaxing $(C_3)$ (Track B-C3, `track_b_c3.py`):** Decomposes **per task** with a single scalar multiplier $\mu \ge 0$. Solves via 1D bisection in **$< 1\text{ms}$**. Empirically validates linear programming duality: its optimal continuous bound matches Track C's continuous LP bound to the decimal place (15.00% vs 15.00% uniform, 25.17% vs 25.17% structured).
+
+### $T_2$ — Can greedy construction survive aggregate coupling?
+- **Status:** **FULLY RESOLVED (Findings F8, F17, F20)**
+- **Outcome:** Plain greedy fails on `adversarial_3t2p` (cost 300 vs optimum 280) due to myopic per-task pricing. Multi-start and single-move relocate provably fail.
+- **Resolution:** Implemented `consolidate_subsets()` (`A+subset` in `track_a_subset.py`). Evaluating $k$-subset relocations ($k \le 2$) moves $\{t_1, t_2\} \to m_2$ together while keeping $t_3 \to m_1$, **achieving the proven optimum of 280**. On structured benchmarks, cuts mean cost gap from **32.37% down to 1.57%**. (**The "20× error reduction" is withdrawn** — one mean divided by another, the defect F30 found systemic. Audited in **F32**: median per-instance ratio **1.53×**, and the ratio of means moved 20.6× → 2.41× on a larger instance set, so it was *unstable*, not just inflated. What holds, and is stronger: **never worse on any of 72 paired instances**, better on 54, paired difference **11.46 pp [6.68, 17.24]**.)
+
+### $T_3$ — Over what budget range does the problem have interesting structure?
+- **Status:** **FULLY RESOLVED (Findings F11, F15, F22)**
+- **Outcome:** Solvability transitions across budget tightness $B / B_{\text{ref}}$. The knife-edge cliff at $1.0\times B_{\text{ref}}$ (where small instance variations cause 0/5 to 5/5 feasibility jumps) is eliminated by extending sweeps to $[1.25\times, 1.5\times B_{\text{ref}}]$, providing clean asymptotic gap measurements for Chapter 3.
+
+### $T_4$ — Is Track A worth its complexity relative to Track C?
+- **Status:** **FULLY RESOLVED (Findings F6, F10, F14, F17, F20)**
+- **Outcome:** Plain Track A collapses under structured coupling. Track C with multi-move consolidation (`C+cons`) and Track A with subset consolidation (`A+subset`) are the leading polynomial-time algorithms. Track C provides LP lower bounds and rapid solve times; `A+subset` delivers sub-2% mean gaps in milliseconds.
+
+---
+
+## 3. PoC Build Steps Progress (Steps 1–10)
+
+| Step | Component | File | Status | Test Coverage |
+|---|---|---|---|---|
+| **Step 1** | Types & Data Structures | `poc/formulation/types.py` | **Complete** | Validated in all tracks |
+| **Step 2** | Invariant Gates ($I_1-I_5$) | `poc/formulation/invariants.py` | **Complete** | `test_invariants.py` |
+| **Step 3** | Problem Generators | `generator.py`, `structured_generator.py` | **Complete** | `test_generator.py`, `test_structured_generator.py` |
+| **Step 4** | Exact Reference Solver | `poc/tracks/exact_milp.py` | **Complete** | Hand-verified against `adversarial_3t2p` (opt=280) |
+| **Step 5** | Dynamic Provisioning State | `poc/core/provisioning.py` | **Complete** | `test_provisioning.py` |
+| **Step 6** | Shared Decision Rule | `poc/core/decision_rule.py` | **Complete** | `test_decision_rule.py` |
+| **Step 7** | Track C (LP + Consolidate) | `track_c_lp.py`, `track_c_consolidate.py` | **Complete** | `test_tracks_small.py`, `test_consolidation.py` |
+| **Step 8** | Track B (C1 & C3 Relaxations) | `track_b_lagr.py`, `track_b_c3.py`, `track_b_cold.py`| **Complete** | `test_track_b.py` |
+| **Step 9** | Track A (Greedy, M1, Subset, M1+Subset) | `track_a_greedy.py`, `track_a_m1.py`, `track_a_subset.py`, `track_a_m1_subset.py` | **Complete** | `test_tracks_small.py`, `test_consolidation.py` |
+| **Step 10** | Measurement Harness & Metrics | `poc/harness/runner.py`, `poc/harness/metrics.py` | **Complete** | `test_harness.py` |
+
+---
+
+## 4. Benchmark Performance Matrix (Extended Sweep)
+
+Evaluated across uniform and structured generators over budget tightness $[0.6, 0.8, 1.0, 1.25, 1.5]$:
+
+### 4.1 Tightness Sweep (8 Tasks, 4 Profiles across Tightness [0.6, 0.8, 1.0, 1.25, 1.5])
+
+```
+=== UNIFORM GENERATOR (18 solvable instances) ===
+Condition    Feasible   Infeasible   Matched Opt   Mean Gap%   Max Gap%   Bound Gap%   Time (s)
+-----------------------------------------------------------------------------------------------
+MILP               18            0            18       0.00%      0.00%        0.00%      0.039
+STATIC             13            5             0      23.37%     33.20%            -      0.000
+A (Plain)          15            3             7      11.09%     22.53%            -      0.000
+A+subset           15            3            12       4.51%     22.53%            -      0.000
+B (C1 Dual)        18            0            18       0.00%      0.00%        5.22%      0.907
+B-C3 (C3 Dual)     16            2             7       8.18%     22.53%       15.00%      0.001
+C (LP)             16            2             7       8.18%     22.53%       15.00%      0.031
+C+cons             16            2             7       8.18%     22.53%       15.00%      0.023
+
+=== STRUCTURED GENERATOR (21 solvable instances) ===
+Condition    Feasible   Infeasible   Matched Opt   Mean Gap%   Max Gap%   Bound Gap%   Time (s)
+-----------------------------------------------------------------------------------------------
+MILP               21            0            21       0.00%      0.00%        0.00%      0.039
+STATIC             16            5             0      38.97%     51.29%            -      0.000
+A (Plain)          16            5             4      32.37%     60.94%            -      0.000
+A+subset           16            5            11       1.57%     21.87%            -      0.001
+B (C1 Dual)        21            0            21       0.00%      0.00%        5.02%      0.619
+B-C3 (C3 Dual)     19            2             5      27.75%     50.94%       25.17%      0.001
+C (LP)             19            2             2      42.68%    100.85%       25.17%      0.033
+C+cons             19            2            10       6.11%     21.87%       25.17%      0.023
+```
+
+### 4.2 Multi-Scale Scaling Evaluation (8 to 64 Tasks, Budget 1.25× Reference)
+
+Published in [`docs/evidence/chapter3_benchmark_results.md`](docs/evidence/chapter3_benchmark_results.md) and generated via [`scripts/generate_chapter3_tables.py`](scripts/generate_chapter3_tables.py):
+
+| Scale (Tasks, Prof) | Generator | MILP Time | A Gap% | A+subset Gap% | B-C3 Gap% | C+cons Gap% | C+cons Time |
+|---|---|---|---|---|---|---|---|
+| **8t, 4p** | Uniform | 0.032s | 12.55% | **4.51%** | 8.73% | 8.73% | 0.017s |
+| **8t, 4p** | Structured | 0.023s | 31.75% | **0.20%** | 30.09% | 7.74% | 0.021s |
+| **16t, 6p** | Uniform | 0.084s | 10.33% | **3.27%** | 6.81% | 9.50% | 0.023s |
+| **16t, 6p** | Structured | 0.121s | 29.14% | **0.22%** | 19.21% | 21.89% | 0.037s |
+| **32t, 8p** | Uniform | 0.214s | 8.83% | **2.20%** | 5.19% | 3.97% | 0.032s |
+| **32t, 8p** | Structured | 0.162s | 27.95% | 13.03% | 8.28% | **8.02%** | 0.057s |
+| **64t, 10p** | Uniform | 7.935s | 11.81% | 4.78% | 5.62% | **4.00%** | 0.055s |
+| **64t, 10p** | Structured | 0.210s | 23.77% | 13.92% | 8.96% | **5.59%** | 0.061s |
+
+---
+
+## 5. Findings Log Index (F1–F22)
+
+- **F1:** Exact formulation matches verified hand calculations on `adversarial_3t2p`.
+- **F2:** Reference allocation definition corrected from arbitrary sum to min-GPU routing.
+- **F3:** Track C LP relaxation yields integer routings in 96% of unconstrained instances.
+- **F4:** Subgradient ascent in Track B requires warm start for consistent convergence.
+- **F5:** Murakkab baseline is mathematically identical to exact MILP under matched conditions.
+- **F6:** Track C rounding is trivial; the binding challenge is capacity repair.
+- **F7:** Track B dual bound is strictly tighter than LP bound across all tested instances.
+- **F8:** Plain greedy trapped by aggregate coupling on adversarial fixture (cost 300 vs 280).
+- **F9:** Multi-start greedy fails to recover the optimum on adversarial fixture.
+- **F10:** Track A vs Track C trade-off: Track C offers superior bounds; greedy offers speed.
+- **F11:** Budget tightness sweep confirms phase transition from infeasible to saturated.
+- **F12:** Findings F3, F7, F8 survive intact on structured instance generator.
+- **F13:** Track B runtime scales poorly with knapsack subproblem state space.
+- **F14:** At scale with large tasks, greedy heuristics suffer severe degradation without lookahead.
+- **F15:** Scale collapse was an artifact of testing precisely at the $1.0\times$ reference cliff edge.
+- **F16:** Scale sweeps must use matched-instance survivor metrics to prevent bias.
+- **F17:** Diagnosis of Track C worst-case (2× cost) resolved by multi-move profile consolidation pass.
+- **F18:** Scoped re-optimization is vacuous in shared-instance cloud settings due to 84–100% profile overlap.
+- **F19:** Exponential Moving Average (EMA) fails for binary reliability; replaced with decayed counting estimator with Jeffreys prior.
+- **F20:** Subset-move consolidation (`A+subset`) breaks aggregate coupling, achieving true optimum 280 on fixture. (Its "twenty-fold"/1.57% headline is corrected by **F32** — never worse on 72 paired instances, paired difference 11.46 pp [6.68, 17.24]; the gap grows with scale.)
+- **F21:** (C3) Lagrangian relaxation confirms LP duality equivalence (15.00% bound gap in $<1\text{ms}$); (C1) relaxation proved strictly tighter on 30/30, paired **12.57 pp [9.49, 15.64]** (**not** "3–5×" — ratio of means, withdrawn by F30; median per-instance ratio 2.53× uniform, 2.00× structured).
+- **F22:** Extended tightness sweeps above $1.0\times B_{\text{ref}}$ eliminate cliff artifacts and confirm asymptotic convergence.
+
+---
+
+## 6. Literature Knowledge Graph Status
+
+- **Total Ingested Papers:** 12
+- **Total Concepts:** 30
+- **Scope Coverage:**
+  - **$S_1$ (Workflow Orchestration System / DAG execution):** 10 concepts (strengthened by P12 DSPy).
+  - **$S_2$ (Model Routing & Allocation / Resource Optimization):** 16 concepts.
+  - **$S_3$ (Empirical Methodology & Evaluation):** 11 concepts.
+- **Latest Addition:** **P12: DSPy** (*Khattab et al., ICLR 2024*) — establishes the declarative DAG pipeline specification and separates logical execution flow from physical parameter optimization.
+- **Integrity Validation:** Automated scripts (`check_no_shrinkage.py`, `generate_diagram.py`, `build_report.py`, `integrity_check.py`) passing with zero errors.
+
+---
+
+## 7. Outstanding Action Items (Milestone M1 Readiness)
+
+| # | Action Item | Owner | Target Date | Status |
+|---|---|---|---|---|
+| 1 | **T0 / D1 — Ratify the formulation:** Formal team sign-off on §1 mathematical programming model | All | **8 September 2026** | **Ready for sign-off** — model in [`T0_Formulation_Ratification_Briefing.md`](docs/sessions/T0_Formulation_Ratification_Briefing.md), agenda in [`T0_briefing.md`](docs/sessions/T0_briefing.md) |
+| 2 | **Advisor Alignment:** Clarify whether reliability is strictly a floor ($R_{\min}$) or multi-objective trade-off | Team / Advisor | Before T0 | **Briefing prepared** (Option A recommended) |
+| 3 | **Proposal Chapter 3 Drafting:** Ingest benchmark tables from F20–F22 (`chapter3_benchmark_results.md`) | All | Mid-September | **Done** (Tables ready) |
+| 4 | **Semester 2 Scope Pruning:** Formally excise scoped re-optimization from implementation architecture (F18) | 077 | Milestone M1 | Decided |
+
+---
+
+## 8. Core Deliverables & Architecture Reference Index
+
+| Deliverable | File Path | Purpose |
+|---|---|---|
+| **Authoritative Architecture** | [`docs/design/System_Architecture_v2.md`](docs/design/System_Architecture_v2.md) | Formal problem formulation (§1), component architecture (§3-§5), invariants (§6) |
+| **T0 Ratification Briefing** | [`docs/sessions/T0_Formulation_Ratification_Briefing.md`](docs/sessions/T0_Formulation_Ratification_Briefing.md) | The **formal model** being signed off. Its floors-vs-objectives question was **answered 3 Sep — a floor** (O10) |
+| **T0 session agenda** | [`docs/sessions/T0_briefing.md`](docs/sessions/T0_briefing.md) | How to **run** the 8 Sep session: confirm-or-object, defaults, sign-off template |
+| **Orientation** | [`docs/ORIENTATION.md`](docs/ORIENTATION.md) | The whole project in one file, for anyone new |
+| **Validation Plan** | [`docs/proposal/PoC_and_Validation_Plan.md`](docs/proposal/PoC_and_Validation_Plan.md) | September PoC roadmap, milestone definitions, research questions $T_1-T_4$ |
+| **Executive Summary** | [`docs/evidence/poc_findings_summary.md`](docs/evidence/poc_findings_summary.md) | Standing summary of beliefs, confidence levels, and core conclusions |
+| **Chronological Findings** | [`docs/evidence/poc_findings.md`](docs/evidence/poc_findings.md) | Detailed findings log from F1 to F22, including mathematical proofs and anomalies |
+| **M1 Presentation Slides** | [`docs/proposal/M1_Proposal_Presentation_Slides.md`](docs/proposal/M1_Proposal_Presentation_Slides.md) | 16-slide presentation outline, visuals, speaker script, and committee Q&A prep |
+| **Chapter 3 Benchmarks** | [`docs/evidence/chapter3_benchmark_results.md`](docs/evidence/chapter3_benchmark_results.md) | Publication-grade Markdown and LaTeX benchmark tables (8 to 64 tasks) |
+| **Literature Report** | [`docs/research_papers/relationship_report.md`](docs/research_papers/relationship_report.md) | Synthesis of 12 foundational papers across scopes $S_1, S_2, S_3$ (12,260 words) |
+| **Pipeline Diagram** | [`docs/design/pipeline.md`](docs/design/pipeline.md) | End-to-end ASCII trace of the resource allocation and provisioning pipeline |
+
+---
+
+*Last Updated: 3 September 2026 | Verified against test suite (566 tests, 562 passed, 4 skipped) | Branch: `mickie`*
+
+

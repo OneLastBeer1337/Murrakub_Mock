@@ -1,0 +1,260 @@
+{
+  "project": {
+    "name": "Profile-Guided Resource Orchestration Platform for Multi-Step Agentic Workflows",
+    "scope_items": {
+      "S1": "Workflow Orchestration System (DAG-based, topological execution over multi-step agentic workflows)",
+      "S2": "Profile-Guided Allocation (heuristic scoring, model+hardware+config assignment, drift-correction)",
+      "S3": "Testing and Evaluation (fault injection, cost/latency/reliability comparison vs fixed allocation)"
+    }
+  },
+  "concepts": [
+    {
+      "id": "C_DAG",
+      "name": "DAG / Topological-order workflow execution",
+      "supports_scope": "S1"
+    },
+    {
+      "id": "C_PGO",
+      "name": "Profile-Guided Optimization (real measured data drives allocation)",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_MILP",
+      "name": "MILP joint solver for task/model/hardware assignment",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_HEURISTIC",
+      "name": "Heuristic/greedy allocation as MILP alternative",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_DRIFT",
+      "name": "Self-updating / drift-correcting profile estimates",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_STATIC_DYNAMIC",
+      "name": "Static (design-time) vs dynamic (runtime-adaptive) allocation",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_FORMAL_OBJ",
+      "name": "Formal cost/latency/quality objective function",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_EVAL_METRICS",
+      "name": "Evaluation metrics for allocation/routing quality",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_FEASFIRST",
+      "name": "Feasibility-first filtering before cost-ranking",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_LEARNED_ROUTING",
+      "name": "Learned query-to-model routing",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_QUALITY_COST_METRIC",
+      "name": "Quality-vs-cost tradeoff metrics (PGR/APGR-style)",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_ONLINE_PREF_EVAL",
+      "name": "Online preference-based evaluation methodology",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_CURVE_METRICS",
+      "name": "Curve-level routing metrics (nAUC, Peak Score, QNC, RCI)",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_STANDARDIZED_TOOLING",
+      "name": "Standardized-tooling design pattern for fair comparison harness",
+      "supports_scope": "S3"
+    },
+    {
+      "id": "C_COMBO_SELECTION",
+      "name": "Model-combination-level selection (assign models per pipeline role jointly, not per call)",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_BANDIT_SEARCH",
+      "name": "Multi-armed bandit / arm-elimination search over a combinatorial config space",
+      "supports_scope": "S2"
+    },
+    {
+      "id": "C_CLIENT_SIDE_OPT",
+      "name": "Client-side (developer-controlled) optimization vs server-side serving optimization",
+      "supports_scope": "S1"
+    },
+    {
+      "id": "C_TRANSPORT_INTERCEPT",
+      "name": "Framework-agnostic transport-layer interception/attribution for measuring per-call cost/latency",
+      "supports_scope": "S1"
+    }
+  ],
+  "papers": [
+    {
+      "id": "P1",
+      "short_name": "Murakkab",
+      "full_citation": "Chaudhry, G. I., et al. (2026). Murakkab: Resource-Efficient Agentic Workflow Orchestration in Cloud Platforms. OSDI '26.",
+      "role": "foundation",
+      "role_label": "Technical base of the project",
+      "status": "in_references",
+      "summary": "Declarative workflow compiled to a DAG; a Profile-Guided Optimizer (MILP) jointly assigns model, hardware, and parallelism per task, solved once per workflow instance, using real profiled cost/latency/reliability data rather than assumptions.",
+      "full_detail": {
+        "problem": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY, NOT RE-DERIVED FROM THE ORIGINAL PDF] Existing agentic workflow systems fix model/hardware assignment at design time or make per-call decisions without a holistic, whole-DAG view, leading to inefficient resource use in cloud deployment of multi-step agentic workflows.",
+        "method": "Declarative workflow specification compiled into a DAG. A Profile-Guided Optimizer inspects the full DAG before execution and solves a MILP that jointly assigns model + hardware/resource + parallelism configuration per task, using profiled (measured, not assumed) cost/latency/reliability data. Decision is made once per workflow instance, not per call.",
+        "results": "[Not re-derivable without the source PDF \u2014 original session's extracted numbers are not preserved in the handoff summary.]",
+        "limitations": "MILP requires a specialized/licensed solver (CPLEX/Gurobi/GLPK-class), does not adapt to drift without a full re-solve, and is heavyweight relative to the compute/engineering budget of a one-semester student project.",
+        "numbers": []
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_DAG",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Murakkab is the origin of the whole-DAG-before-assignment framing this project adopts."
+        },
+        {
+          "concept_id": "C_PGO",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Origin of the Profile-Guided Optimization concept: real measured data, not assumptions, drives allocation."
+        },
+        {
+          "concept_id": "C_MILP",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Murakkab's optimizer core is a MILP; this project explicitly replaces it with a heuristic while keeping MILP as an optional offline baseline."
+        }
+      ],
+      "caveats": "This entry is reconstructed from a compressed handoff description, not from the original PDF. Verbatim excerpts and precise numeric results need to be re-derived from the source paper if strict archival fidelity is required."
+    },
+    {
+      "id": "P2",
+      "short_name": "Dynamic Orchestration of Data Pipelines via Agentic AI",
+      "full_citation": "Koppolu, et al. (2025). Dynamic Orchestration of Data Pipelines via Agentic AI. Metallurgical and Materials Engineering.",
+      "role": "supporting",
+      "role_label": "Vocabulary source only, not a credibility-bearing citation",
+      "status": "considered_not_cited",
+      "summary": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY] Proposes agentic AI for dynamically orchestrating data pipelines; introduces AAF/WOO/RDF-style formula vocabulary. Flagged for quality concerns: non-CS venue, weak reference list.",
+      "full_detail": {
+        "problem": "[Not re-derivable without the source PDF.]",
+        "method": "[Not re-derivable without the source PDF.]",
+        "results": "[Not re-derivable without the source PDF.]",
+        "limitations": "Published in a non-CS (materials engineering) venue with a weak reference list, which undermines its use as a credibility-bearing citation despite potentially useful vocabulary.",
+        "numbers": []
+      },
+      "concept_links": [],
+      "caveats": "This entry is reconstructed from a compressed handoff description only; original PDF not available in this session. Status noted as considered_not_cited \u2014 useful only for terminology, not citation."
+    },
+    {
+      "id": "P3",
+      "short_name": "Fast Heterogeneous Serving",
+      "full_citation": "Cheng, J., & Nguyen, D. T. (2026). Scalable Joint Resource Allocation for SLO-Constrained LLM Inference in Heterogeneous GPU Clouds. arXiv:2604.07472.",
+      "role": "foundation",
+      "role_label": "Strongest technical precedent found so far for the MILP-to-heuristic move",
+      "status": "recommended_add_to_references",
+      "summary": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY] Introduces a Greedy Heuristic / Adaptive Greedy Heuristic for SLO-constrained LLM inference resource allocation across heterogeneous GPU clouds, reporting 260x+ speedup over exact solving with near-optimal cost and graceful degradation under uncertainty. Introduces C_FEASFIRST (feasibility-first filtering before cost-ranking).",
+      "full_detail": {
+        "problem": "[Not re-derivable without the source PDF.]",
+        "method": "Greedy Heuristic / Adaptive Greedy Heuristic that performs feasibility-first filtering (discard infeasible allocations under SLO constraints) before cost-based ranking of remaining candidates.",
+        "results": "260x+ speedup relative to exact (presumably MILP-class) solving, near-optimal cost, graceful degradation under uncertainty.",
+        "limitations": "[Not re-derivable without the source PDF.]",
+        "numbers": [
+          "260x+ speedup vs exact solving (as reported in prior-session summary)"
+        ]
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_HEURISTIC",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Direct LLM-specific precedent for replacing an exact/MILP-class solver with a fast heuristic, the core move this project makes."
+        },
+        {
+          "concept_id": "C_FEASFIRST",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Origin of the feasibility-first-then-cost-rank pattern, reusable in this project's own DAG-walking allocator."
+        }
+      ],
+      "caveats": "This entry is reconstructed from a compressed handoff description, not from the original PDF. Recommended for actual addition to the Idea Paper's reference list per prior session's conclusion."
+    },
+    {
+      "id": "P4",
+      "short_name": "RouteLLM",
+      "full_citation": "Ong, I., Almahairi, A., Wu, V., Chiang, W-L., Wu, T., Gonzalez, J. E., Kadous, M. W., & Stoica, I. (2024/2025, ICLR). RouteLLM: Learning to Route LLMs with Preference Data. arXiv:2406.18665.",
+      "role": "supporting",
+      "role_label": "Evaluation-metric source; scope mismatch on core mechanism",
+      "status": "considered_partial_add",
+      "summary": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY] Routes individual queries to one of two existing LLMs using human preference data. Flagged as a scope mismatch: this is model *selection between existing LLMs* per query, not joint model+hardware+config allocation across a DAG. Useful for its PGR/APGR-style quality-cost evaluation metrics.",
+      "full_detail": {
+        "problem": "[Not re-derivable without the source PDF.]",
+        "method": "Learns a router, trained on human preference data, that assigns each incoming query to one of two candidate LLMs (a strong/expensive model or a weak/cheap model).",
+        "results": "[Not re-derivable without the source PDF.]",
+        "limitations": "Per-call, two-model routing \u2014 does not address joint multi-resource (model+hardware+parallelism) allocation across a multi-step workflow, which is this project's actual problem.",
+        "numbers": []
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_LEARNED_ROUTING",
+          "strength": "medium",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Represents the learned per-query routing paradigm this project's problem differs from (whole-DAG, multi-resource allocation vs per-call two-model routing)."
+        },
+        {
+          "concept_id": "C_QUALITY_COST_METRIC",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Source of PGR/APGR-style quality-cost evaluation metrics usable in this project's own evaluation methodology."
+        }
+      ],
+      "caveats": "This entry is reconstructed from a compressed handoff description, not from the original PDF."
+    },
+    {
+      "id": "P5",
+      "short_name": "RouteJudge / ORBIT",
+      "full_citation": "Lai, Hu, & Ye (2026). RouteJudge/ORBIT. arXiv:2606.18774.",
+      "role": "supporting",
+      "role_label": "Evaluation methodology source; same scope mismatch as P4",
+      "status": "considered_partial_add",
+      "summary": "[RECONSTRUCTED FROM PRIOR-SESSION SUMMARY] Same per-query routing scope mismatch as RouteLLM. Useful for online preference-based evaluation methodology and curve-level metrics (nAUC, Peak Score, QNC, Routing Collapse Index), plus a standardized-tooling design pattern for building a fair comparison harness \u2014 feeds this project's Scope Item 3 (Evaluation), the best-covered scope item in the map.",
+      "full_detail": {
+        "problem": "[Not re-derivable without the source PDF.]",
+        "method": "Online, preference-based evaluation methodology for LLM routers, using curve-level metrics rather than single-point accuracy: nAUC, Peak Score, QNC (Quality-Normalized Cost, or similarly named), and Routing Collapse Index (RCI). Provides standardized tooling for building a fair comparison harness across routing methods.",
+        "results": "[Not re-derivable without the source PDF.]",
+        "limitations": "Same scope mismatch as P4 \u2014 evaluates per-query routing among existing models, not multi-resource DAG-level allocation.",
+        "numbers": []
+      },
+      "concept_links": [
+        {
+          "concept_id": "C_ONLINE_PREF_EVAL",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Source of the online preference-based evaluation methodology this project's own evaluation plan can borrow from."
+        },
+        {
+          "concept_id": "C_CURVE_METRICS",
+          "strength": "strong",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Source of curve-level metrics (nAUC, Peak Score, QNC, RCI) as candidate evaluation metrics beyond single-point accuracy."
+        },
+        {
+          "concept_id": "C_STANDARDIZED_TOOLING",
+          "strength": "medium",
+          "excerpt": "[not available \u2014 re-derive from PDF]",
+          "detail": "Design-pattern precedent for building a standardized, fair comparison harness, relevant to this project's fault-injection evaluation tooling."
+        }
+      ],
+      "caveats": "This entry is reconstructed from a compressed handoff description, not from the original PDF."
+    }
+  ]
+}

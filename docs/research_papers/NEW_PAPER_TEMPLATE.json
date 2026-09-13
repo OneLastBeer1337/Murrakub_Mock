@@ -1,0 +1,25 @@
+{
+  "id": "P#",
+  "short_name": "",
+  "full_citation": "",
+  "role": "foundation | supporting",
+  "role_label": "",
+  "status": "in_references | considered_not_cited | recommended_add_to_references | considered_partial_add | rejected",
+  "summary": "",
+  "full_detail": {
+    "problem": "",
+    "method": "",
+    "results": "",
+    "limitations": "",
+    "numbers": []
+  },
+  "concept_links": [
+    {
+      "concept_id": "C_",
+      "strength": "strong | medium | weak",
+      "excerpt": "a few words verbatim, never a full sentence",
+      "detail": "paraphrased explanation of how this paper supports/relates to the concept"
+    }
+  ],
+  "caveats": ""
+}
