@@ -1,9 +1,11 @@
 # Python
 __pycache__/
+*.py[cod]
 *.pyc
 venv/
 .venv/
 *.egg-info/
+.pytest_cache/
 
 # Data - large raw logs shouldn't bloat the repo; keep small samples only
 data/*.log
@@ -17,5 +19,10 @@ data/*.log
 
 # Environment
 .env
-.kilo
+.scratch/
+
+# Agent directories
+.agent/
 .agents/
+.kilo/
+.kilo
