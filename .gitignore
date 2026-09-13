@@ -2,4 +2,11 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .scratch/
+# Virtual environments
+venv/
+.venv/
 
+# Agent directories
+.agent/
+.agents/
+.kilo/
